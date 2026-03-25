@@ -2,31 +2,33 @@ package com.andregarcia.kinalapp.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name="productos")
-
 public class Producto {
+
     @Id
     @Column(name = "codigo_producto")
-    private Integer codigoProducto;
+    private int codigoProducto;
     @Column(name = "nombre_producto")
     private String nombreProducto;
     @Column(name = "precio")
     private Double precio;
     @Column(name = "stock")
-    private Integer stock;
+    private int stock;
     @Column(name = "estado")
     private int estado;
 
-
-    // Constructor vacio
+    // Constructor vacío
     public Producto() {
     }
 
-    public Producto(Integer codigoProducto, String nombreProducto, Double precio, Integer stock, int estado) {
+    // Constructor con parámetros
+    public Producto(int codigoProducto, String nombreProducto, Double precio, int stock, int estado) {
         this.codigoProducto = codigoProducto;
         this.nombreProducto = nombreProducto;
         this.precio = precio;
@@ -34,11 +36,12 @@ public class Producto {
         this.estado = estado;
     }
 
-    public Integer getCodigoProducto() {
+    // Getters y Setters
+    public int getCodigoProducto() {
         return codigoProducto;
     }
 
-    public void setCodigoProducto(Integer codigoProducto) {
+    public void setCodigoProducto(int codigoProducto) {
         this.codigoProducto = codigoProducto;
     }
 
@@ -58,11 +61,11 @@ public class Producto {
         this.precio = precio;
     }
 
-    public Integer getStock() {
+    public int getStock() {
         return stock;
     }
 
-    public void setStock(Integer stock) {
+    public void setStock(int stock) {
         this.stock = stock;
     }
 
