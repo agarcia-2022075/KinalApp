@@ -6,29 +6,34 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name="productos")
 public class Producto {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "codigo_producto")
-    private int codigoProducto;
+    private Long codigoProducto;
+
     @Column(name = "nombre_producto")
     private String nombreProducto;
+
     @Column(name = "precio")
-    private Double precio;
+    private BigDecimal precio;
+
     @Column(name = "stock")
     private int stock;
+
     @Column(name = "estado")
     private int estado;
 
-    // Constructor vacío
+    //Constructo vacio
     public Producto() {
     }
 
-    // Constructor con parámetros
-    public Producto(int codigoProducto, String nombreProducto, Double precio, int stock, int estado) {
+    public Producto(Long codigoProducto, String nombreProducto, BigDecimal precio, int stock, int estado) {
         this.codigoProducto = codigoProducto;
         this.nombreProducto = nombreProducto;
         this.precio = precio;
@@ -36,12 +41,11 @@ public class Producto {
         this.estado = estado;
     }
 
-    // Getters y Setters
-    public int getCodigoProducto() {
+    public Long getCodigoProducto() {
         return codigoProducto;
     }
 
-    public void setCodigoProducto(int codigoProducto) {
+    public void setCodigoProducto(Long codigoProducto) {
         this.codigoProducto = codigoProducto;
     }
 
@@ -53,11 +57,11 @@ public class Producto {
         this.nombreProducto = nombreProducto;
     }
 
-    public Double getPrecio() {
+    public BigDecimal getPrecio() {
         return precio;
     }
 
-    public void setPrecio(Double precio) {
+    public void setPrecio(BigDecimal precio) {
         this.precio = precio;
     }
 
