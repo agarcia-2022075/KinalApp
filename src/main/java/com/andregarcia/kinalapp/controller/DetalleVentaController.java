@@ -20,14 +20,16 @@ public class DetalleVentaController {
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("detalles", detalleVentaService.listarTodos());
-        return "ventas/lista-detalles";
+        // Ruta corregida
+        return "lista-detalles";
     }
 
     // GET: Busca un detalle específico
     @GetMapping("/{id}")
     public String buscarPorId(@PathVariable Long id, Model model) {
         detalleVentaService.buscarPorId(id).ifPresent(detalle -> model.addAttribute("detalle", detalle));
-        return "ventas/ver-detalle";
+        // Ruta corregida
+        return "ver-detalle";
     }
 
     // POST: Agrega un producto (detalle) a una venta existente
@@ -35,18 +37,10 @@ public class DetalleVentaController {
     public String guardar(@ModelAttribute DetalleVenta detalleVenta) {
         try {
             detalleVentaService.guardar(detalleVenta);
-            // Tras agregar el detalle, redirigimos a la vista de la factura principal
-            return "redirect:/ventas/" + detalleVenta.getVenta().getCodigoVenta();
+            // La redirección se mantiene igual porque apunta a una URL y no a un archivo HTML
+            return "redirect:/ventas/detalle/" + detalleVenta.getVenta().getCodigoVenta();
         } catch (RuntimeException e) {
             return "redirect:/ventas?errorDetalle=true";
         }
     }
-
-    /* *
-     * INMUTABILIDAD FISCAL APLICADA
-     * Los métodos actualizar (PUT) y eliminar (DELETE)
-     * han sido removidos intencionalmente. Una vez que
-     * un producto entra a la factura, no se puede alterar :)
-     *
-     */
 }
