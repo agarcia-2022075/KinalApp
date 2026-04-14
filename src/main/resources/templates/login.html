@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Iniciar Sesión - KinalApp</title>
-    <link rel="stylesheet" th:href="@{/css/login.css}">
+    <link rel="stylesheet" th:href="@{/login.css}">
 </head>
 <body>
 
 <div class="login-container">
     <h2>KinalApp POS</h2>
 
+    <div th:if="${error}" style="background-color: #ffe6e6; color: #cc0000; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center;">
+        <span th:text="${error}"></span>
+    </div>
+
+    <div th:if="${param.logout}" style="background-color: #e6ffe6; color: #006600; padding: 10px; border-radius: 4px; margin-bottom: 15px; text-align: center;">
+        <span>Sesión cerrada correctamente.</span>
+    </div>
+    
     <form th:action="@{/login}" method="post">
         <div class="form-group">
             <label for="username">Usuario:</label>
