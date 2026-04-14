@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Inventario de Productos - KinalApp</title>
+    <link rel="stylesheet" th:href="@{/main.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">KinalApp POS</div>
+    <ul class="nav-links">
+        <li><a th:href="@{/clientes}">Clientes</a></li>
+        <li><a th:href="@{/productos}">Productos</a></li>
+        <li><a th:href="@{/usuarios}">Usuarios</a></li>
+        <li><a th:href="@{/ventas}">Ventas</a></li>
+    </ul>
+    <div class="user-info">
+        <span>Bienvenido, <b th:text="${session.usuarioLogueado}">Usuario</b></span>
+        <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>Inventario de Productos</h2>
+
+    <div class="toolbar">
+        <a th:href="@{/productos/nuevo}" class="btn-nuevo" style="margin-bottom:0;">+ Añadir Producto</a>
+
+        <div class="filtros">
+            <input type="text" id="buscador" class="buscador-input" placeholder="🔍 Buscar producto..." onkeyup="filtrarTabla()">
+            <a th:href="@{/productos}" class="btn-editar" style="background-color: #17a2b8; color: white; padding: 10px;">Todos</a>
+            <a th:href="@{/productos/activos}" class="btn-editar" style="background-color: #28a745; color: white; padding: 10px;">Solo Activos</a>
+        </div>
+    </div>
+
+    <table id="tablaProductos">
+        <thead>
+        <tr>
+            <th>Código</th>
+            <th>Nombre / Descripción</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="producto : ${productos}">
+            <td th:text="${producto.codigoProducto}"></td>
+            <td th:text="${producto.nombreProducto}"></td>
+            <td th:text="'Q ' + ${producto.precio}"></td>
+            <td th:text="${producto.stock}"></td>
+            <td>
+                        <span th:text="${producto.estado == 1 ? 'Activo' : 'Inactivo'}"
+                              th:style="${producto.estado == 1 ? 'color: green; font-weight: bold;' : 'color: red;'}">
+                        </span>
+            </td>
+            <td>
+                <a th:href="@{/productos/editar/{id}(id=${producto.codigoProducto})}" class="btn-editar">Editar</a>
+                <a th:href="@{/productos/eliminar/{id}(id=${producto.codigoProducto})}" class="btn-eliminar"
+                   onclick="return confirm('¿Está seguro que desea eliminar este producto del inventario?');">Eliminar</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(productos)}">
+            <td colspan="6" style="text-align: center;">No hay productos registrados.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function filtrarTabla() {
+        let input = document.getElementById("buscador").value.toUpperCase();
+        let filas = document.getElementById("tablaProductos").getElementsByTagName("tr");
+
+        for (let i = 1; i < filas.length; i++) {
+            let celdas = filas[i].getElementsByTagName("td");
+            let coincidencia = false;
+
+            // Buscar en ID y Nombre (columnas 0 y 1)
+            for (let j = 0; j < 2; j++) {
+                if (celdas[j] && celdas[j].innerText.toUpperCase().indexOf(input) > -1) {
+                    coincidencia = true;
+                    break;
+                }
+            }
+            filas[i].style.display = coincidencia ? "" : "none";
+        }
+    }
+</script>
+</body>
+</html>
