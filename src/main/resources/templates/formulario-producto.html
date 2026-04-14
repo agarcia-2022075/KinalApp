@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Producto</title>
+    <link rel="stylesheet" th:href="@{/main.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">KinalApp POS</div>
+    <ul class="nav-links">
+        <li><a th:href="@{/clientes}">Clientes</a></li>
+        <li><a th:href="@{/productos}">Productos</a></li>
+        <li><a th:href="@{/usuarios}">Usuarios</a></li>
+        <li><a th:href="@{/ventas}">Ventas</a></li>
+    </ul>
+    <div class="user-info">
+        <span>Bienvenido, <b th:text="${session.usuarioLogueado}">Usuario</b></span>
+        <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 th:text="${producto.codigoProducto == null} ? 'Registrar Nuevo Producto' : 'Editar Producto'">Formulario</h2>
+
+    <form th:action="@{/productos}" th:object="${producto}" method="post" class="form-crud">
+
+        <input type="hidden" th:field="*{codigoProducto}" />
+
+        <div class="form-group">
+            <label>Nombre del Producto:</label>
+            <input type="text" th:field="*{nombreProducto}" required placeholder="Ej: Laptop Dell" />
+        </div>
+
+        <div class="form-group">
+            <label>Precio (Q):</label>
+            <input type="number" step="0.01" th:field="*{precio}" required placeholder="Ej: 4500.50" />
+        </div>
+
+        <div class="form-group">
+            <label>Stock / Existencias:</label>
+            <input type="number" th:field="*{stock}" required placeholder="Cantidad en bodega" />
+        </div>
+
+        <div class="form-group">
+            <label>Estado del Producto:</label>
+            <select th:field="*{estado}" required>
+                <option value="1">Disponible (Activo)</option>
+                <option value="0">Agotado / Descontinuado (Inactivo)</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-guardar">Guardar Producto</button>
+        <a th:href="@{/productos}" class="btn-cancelar">Cancelar</a>
+    </form>
+</div>
+
+</body>
+</html>
