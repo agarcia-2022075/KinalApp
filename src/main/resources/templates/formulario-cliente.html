@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Cliente</title>
+    <link rel="stylesheet" th:href="@{/main.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">KinalApp POS</div>
+    <ul class="nav-links">
+        <li><a th:href="@{/clientes}">Clientes</a></li>
+        <li><a th:href="@{/productos}">Productos</a></li>
+        <li><a th:href="@{/usuarios}">Usuarios</a></li>
+        <li><a th:href="@{/ventas}">Ventas</a></li>
+    </ul>
+    <div class="user-info">
+        <span>Bienvenido, <b th:text="${session.usuarioLogueado}">Usuario</b></span>
+        <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 th:text="${cliente.dpiCliente == null or cliente.dpiCliente.isEmpty()} ? 'Registrar Nuevo Cliente' : 'Editar Cliente'">Formulario</h2>
+
+    <form th:action="@{/clientes}" th:object="${cliente}" method="post" class="form-crud">
+
+        <div class="form-group">
+            <label>DPI del Cliente:</label>
+            <input type="text" th:field="*{dpiCliente}" required
+                   th:readonly="${cliente.dpiCliente != null and !cliente.dpiCliente.isEmpty()}"
+                   placeholder="Ej: 1234567890101" />
+        </div>
+
+        <div class="form-group">
+            <label>Nombre:</label>
+            <input type="text" th:field="*{nombreCliente}" required placeholder="Nombre" />
+        </div>
+
+        <div class="form-group">
+            <label>Apellido:</label>
+            <input type="text" th:field="*{apellidoCliente}" required placeholder="Apellido" />
+        </div>
+
+        <div class="form-group">
+            <label>Dirección:</label>
+            <input type="text" th:field="*{direccion}" required placeholder="Dirección completa" />
+        </div>
+
+        <div class="form-group">
+            <label>Estado del Cliente:</label>
+            <select th:field="*{estado}" required>
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-guardar">Guardar Cliente</button>
+        <a th:href="@{/clientes}" class="btn-cancelar">Cancelar</a>
+    </form>
+</div>
+
+</body>
+</html>
