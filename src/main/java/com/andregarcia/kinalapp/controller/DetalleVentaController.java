@@ -2,13 +2,11 @@ package com.andregarcia.kinalapp.controller;
 
 import com.andregarcia.kinalapp.entity.DetalleVenta;
 import com.andregarcia.kinalapp.service.IDetalleVentaService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
+@Controller
 @RequestMapping("/detalles")
 public class DetalleVentaController {
 
@@ -18,54 +16,37 @@ public class DetalleVentaController {
         this.detalleVentaService = detalleVentaService;
     }
 
+    // GET: Lista todos los detalles (útil para auditoría)
     @GetMapping
-    public ResponseEntity<List<DetalleVenta>> listar() {
-        return ResponseEntity.ok(detalleVentaService.listarTodos());
+    public String listar(Model model) {
+        model.addAttribute("detalles", detalleVentaService.listarTodos());
+        return "ventas/lista-detalles";
     }
 
+    // GET: Busca un detalle específico
     @GetMapping("/{id}")
-    public ResponseEntity<DetalleVenta> buscarPorId(@PathVariable Long id) {
-        return detalleVentaService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public String buscarPorId(@PathVariable Long id, Model model) {
+        detalleVentaService.buscarPorId(id).ifPresent(detalle -> model.addAttribute("detalle", detalle));
+        return "ventas/ver-detalle";
     }
 
-
-
+    // POST: Agrega un producto (detalle) a una venta existente
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody DetalleVenta detalleVenta) {
+    public String guardar(@ModelAttribute DetalleVenta detalleVenta) {
         try {
-            DetalleVenta nuevoDetalle = detalleVentaService.guardar(detalleVenta);
-            return new ResponseEntity<>(nuevoDetalle, HttpStatus.CREATED);
+            detalleVentaService.guardar(detalleVenta);
+            // Tras agregar el detalle, redirigimos a la vista de la factura principal
+            return "redirect:/ventas/" + detalleVenta.getVenta().getCodigoVenta();
         } catch (RuntimeException e) {
-            // Atrapa errores de validación y si el producto no existe
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return "redirect:/ventas?errorDetalle=true";
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody DetalleVenta detalleVenta) {
-        try {
-            if (!detalleVentaService.existeId(id)) {
-                return ResponseEntity.notFound().build();
-            }
-            DetalleVenta detalleActualizado = detalleVentaService.actualizar(id, detalleVenta);
-            return ResponseEntity.ok(detalleActualizado);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        try {
-            if (!detalleVentaService.existeId(id)) {
-                return ResponseEntity.notFound().build();
-            }
-            detalleVentaService.eliminar(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+    /* *
+     * INMUTABILIDAD FISCAL APLICADA
+     * Los métodos actualizar (PUT) y eliminar (DELETE)
+     * han sido removidos intencionalmente. Una vez que
+     * un producto entra a la factura, no se puede alterar :)
+     *
+     */
 }

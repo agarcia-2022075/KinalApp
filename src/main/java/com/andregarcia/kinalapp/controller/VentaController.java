@@ -2,13 +2,11 @@ package com.andregarcia.kinalapp.controller;
 
 import com.andregarcia.kinalapp.entity.Venta;
 import com.andregarcia.kinalapp.service.IVentaService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
+@Controller
 @RequestMapping("/ventas")
 public class VentaController {
 
@@ -18,58 +16,43 @@ public class VentaController {
         this.ventaService = ventaService;
     }
 
+    // GET: Muestra el historial completo de ventas
     @GetMapping
-    public ResponseEntity<List<Venta>> listar() {
-        return ResponseEntity.ok(ventaService.listarTodos());
+    public String listar(Model model) {
+        model.addAttribute("ventas", ventaService.listarTodos());
+        return "ventas/historial-ventas";
     }
 
+    // GET: Muestra solo ventas activas
     @GetMapping("/activos")
-    public ResponseEntity<List<Venta>> listarActivos() {
-        return ResponseEntity.ok(ventaService.listarActivos());
+    public String listarActivos(Model model) {
+        model.addAttribute("ventas", ventaService.listarActivos());
+        return "ventas/historial-ventas";
     }
 
+    // GET: Busca una factura específica para verla (Solo Lectura)
     @GetMapping("/{id}")
-    public ResponseEntity<Venta> buscarPorId(@PathVariable Long id) {
-        return ventaService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public String buscarPorId(@PathVariable Long id, Model model) {
+        ventaService.buscarPorId(id).ifPresent(venta -> model.addAttribute("venta", venta));
+        return "ventas/detalle-factura";
     }
 
+    // POST: Crea la cabecera de la factura (nueva venta)
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody Venta venta) {
+    public String guardar(@ModelAttribute Venta venta) {
         try {
-            Venta nuevaVenta = ventaService.guardar(venta);
-            return new ResponseEntity<>(nuevaVenta, HttpStatus.CREATED);
+            ventaService.guardar(venta);
+            return "redirect:/ventas";
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return "redirect:/ventas?error=true";
         }
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Venta venta) {
-        try {
-            if (!ventaService.existeId(id)) {
-                return ResponseEntity.notFound().build();
-            }
-            Venta ventaActualizada = ventaService.actualizar(id, venta);
-            return ResponseEntity.ok(ventaActualizada);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
-        try {
-            if (!ventaService.existeId(id)) {
-                return ResponseEntity.notFound().build();
-            }
-            ventaService.eliminar(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+    /* *
+     * INMUTABILIDAD FISCAL APLICADA
+     * Los métodos actualizar (PUT) y eliminar (DELETE)
+     * han sido removidos intencionalmente para evitar
+     * la alteración de facturas emitidas :)
+     *
+     */
 }
