@@ -21,12 +21,12 @@ public class Venta {
     private int estado;
 
     // Relacion con cliente (llave foránea)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Clientes_dpi_cliente", referencedColumnName = "dpi_cliente")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Cliente cliente;
     // Relacion con usuario (Llave foránea)
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Usuarios_codigo_usuario", referencedColumnName = "codigo_usuario")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Usuario usuario;
