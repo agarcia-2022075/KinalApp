@@ -1,7 +1,11 @@
 package com.andregarcia.kinalapp.controller;
 
 import com.andregarcia.kinalapp.entity.Venta;
+import com.andregarcia.kinalapp.entity.DetalleVenta;
 import com.andregarcia.kinalapp.service.IVentaService;
+import com.andregarcia.kinalapp.service.IProductoService;
+import com.andregarcia.kinalapp.service.IClienteService;
+import com.andregarcia.kinalapp.service.IUsuarioService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -11,48 +15,48 @@ import org.springframework.web.bind.annotation.*;
 public class VentaController {
 
     private final IVentaService ventaService;
+    private final IProductoService productoService;
+    private final IClienteService clienteService;
+    private final IUsuarioService usuarioService;
 
-    public VentaController(IVentaService ventaService) {
+    public VentaController(IVentaService ventaService, IProductoService productoService,
+                           IClienteService clienteService, IUsuarioService usuarioService) {
         this.ventaService = ventaService;
+        this.productoService = productoService;
+        this.clienteService = clienteService;
+        this.usuarioService = usuarioService;
     }
 
-    // GET: Muestra el historial completo de ventas
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("ventas", ventaService.listarTodos());
-        return "ventas/historial-ventas";
+        // CORRECCIÓN: Nombre exacto según tu captura de pantalla
+        return "listar-ventas";
     }
 
-    // GET: Muestra solo ventas activas
-    @GetMapping("/activos")
-    public String listarActivos(Model model) {
-        model.addAttribute("ventas", ventaService.listarActivos());
-        return "ventas/historial-ventas";
+    @GetMapping("/nuevo")
+    public String mostrarFormulario(Model model) {
+        model.addAttribute("venta", new Venta());
+        model.addAttribute("clientes", clienteService.listarTodos());
+        model.addAttribute("usuarios", usuarioService.listarTodos());
+        return "formulario-venta";
     }
 
-    // GET: Busca una factura específica para verla (Solo Lectura)
-    @GetMapping("/{id}")
-    public String buscarPorId(@PathVariable Long id, Model model) {
-        ventaService.buscarPorId(id).ifPresent(venta -> model.addAttribute("venta", venta));
-        return "ventas/detalle-factura";
-    }
-
-    // POST: Crea la cabecera de la factura (nueva venta)
-    @PostMapping
+    @PostMapping("/guardar")
     public String guardar(@ModelAttribute Venta venta) {
-        try {
-            ventaService.guardar(venta);
-            return "redirect:/ventas";
-        } catch (IllegalArgumentException e) {
-            return "redirect:/ventas?error=true";
-        }
+        ventaService.guardar(venta);
+        return "redirect:/ventas";
     }
 
-    /* *
-     * INMUTABILIDAD FISCAL APLICADA
-     * Los métodos actualizar (PUT) y eliminar (DELETE)
-     * han sido removidos intencionalmente para evitar
-     * la alteración de facturas emitidas :)
-     *
-     */
+    @GetMapping("/detalle/{id}")
+    public String verDetalle(@PathVariable Long id, Model model) {
+        ventaService.buscarPorId(id).ifPresent(v -> {
+            model.addAttribute("venta", v);
+            model.addAttribute("nuevoDetalle", new DetalleVenta());
+            model.addAttribute("productos", productoService.listarActivos());
+            // CORRECCIÓN CRÍTICA: Aquí faltaba cargar los clientes para el punto-de-venta.html
+            model.addAttribute("clientes", clienteService.listarTodos());
+        });
+        return "punto-de-venta";
+    }
 }
