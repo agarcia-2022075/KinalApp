@@ -1,4 +1,4 @@
-
+// Ubicación: C:\Spring_2022075\kinalapp\src\main\java\com\andregarcia\kinalapp\controller\AuthController.java
 
 package com.andregarcia.kinalapp.controller;
 
@@ -11,7 +11,7 @@ public class AuthController {
     // GET: Muestra la pantalla de Login
     @GetMapping("/login")
     public String mostrarLogin() {
-        // Le dice a Spring que busque el archivo en templates/auth/login.html
-        return "auth/login";
+        // CORRECCIÓN: Le decimos a Spring que busque "login.html" directamente en la carpeta templates
+        return "login";
     }
 }
