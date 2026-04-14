@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Usuario</title>
+    <link rel="stylesheet" th:href="@{/main.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">KinalApp POS</div>
+    <ul class="nav-links">
+        <li><a th:href="@{/clientes}">Clientes</a></li>
+        <li><a th:href="@{/productos}">Productos</a></li>
+        <li><a th:href="@{/usuarios}">Usuarios</a></li>
+        <li><a th:href="@{/ventas}">Ventas</a></li>
+    </ul>
+    <div class="user-info">
+        <span>Bienvenido, <b th:text="${session.usuarioLogueado}">Usuario</b></span>
+        <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2 th:text="${usuario.codigoUsuario == null} ? 'Registrar Nuevo Usuario' : 'Editar Usuario'">Formulario</h2>
+
+    <form th:action="@{/usuarios}" th:object="${usuario}" method="post" class="form-crud">
+
+        <input type="hidden" th:field="*{codigoUsuario}" />
+
+        <div class="form-group">
+            <label>Nombre de Usuario (Login):</label>
+            <input type="text" th:field="*{username}" required placeholder="Ej: admin01" />
+        </div>
+
+        <div class="form-group">
+            <label>Rol del Usuario:</label>
+            <select th:field="*{rol}" required>
+                <option value="ADMINISTRADOR">Administrador</option>
+                <option value="CAJERO">Cajero</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Contraseña:</label>
+            <input type="password" th:field="*{password}" required placeholder="Ingrese una contraseña segura" />
+        </div>
+
+        <div class="form-group">
+            <label>Estado del Usuario:</label>
+            <select th:field="*{estado}" required>
+                <option value="1">Activo (Puede iniciar sesión)</option>
+                <option value="0">Inactivo (Acceso revocado)</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn-guardar">Guardar Usuario</button>
+        <a th:href="@{/usuarios}" class="btn-cancelar">Cancelar</a>
+    </form>
+</div>
+
+</body>
+</html>

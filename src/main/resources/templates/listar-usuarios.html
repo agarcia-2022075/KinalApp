@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios - KinalApp</title>
+    <link rel="stylesheet" th:href="@{/main.css}">
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="logo">KinalApp POS</div>
+    <ul class="nav-links">
+        <li><a th:href="@{/clientes}">Clientes</a></li>
+        <li><a th:href="@{/productos}">Productos</a></li>
+        <li><a th:href="@{/usuarios}">Usuarios</a></li>
+        <li><a th:href="@{/ventas}">Ventas</a></li>
+    </ul>
+    <div class="user-info">
+        <span>Bienvenido, <b th:text="${session.usuarioLogueado}">Usuario</b></span>
+        <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+    </div>
+</nav>
+
+<div class="container">
+    <h2>Gestión de Usuarios (Empleados)</h2>
+
+    <div class="toolbar">
+        <a th:href="@{/usuarios/nuevo}" class="btn-nuevo" style="margin-bottom:0;">+ Añadir Usuario</a>
+
+        <div class="filtros">
+            <input type="text" id="buscador" class="buscador-input" placeholder="🔍 Buscar por Usuario o Rol..." onkeyup="filtrarTabla()">
+            <a th:href="@{/usuarios}" class="btn-editar" style="background-color: #17a2b8; color: white; padding: 10px;">Todos</a>
+            <a th:href="@{/usuarios/activos}" class="btn-editar" style="background-color: #28a745; color: white; padding: 10px;">Solo Activos</a>
+        </div>
+    </div>
+
+    <table id="tablaUsuarios">
+        <thead>
+        <tr>
+            <th>Código</th>
+            <th>Usuario (Username)</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th>Acciones</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="usuario : ${usuarios}">
+            <td th:text="${usuario.codigoUsuario}"></td>
+            <td th:text="${usuario.username}"></td>
+            <td th:text="${usuario.rol}"></td>
+            <td>
+                        <span th:text="${usuario.estado == 1 ? 'Activo' : 'Inactivo'}"
+                              th:style="${usuario.estado == 1 ? 'color: green; font-weight: bold;' : 'color: red;'}">
+                        </span>
+            </td>
+            <td>
+                <a th:href="@{/usuarios/editar/{id}(id=${usuario.codigoUsuario})}" class="btn-editar">Editar</a>
+                <a th:href="@{/usuarios/eliminar/{id}(id=${usuario.codigoUsuario})}" class="btn-eliminar"
+                   onclick="return confirm('¿Está seguro que desea eliminar este usuario del sistema?');">Eliminar</a>
+            </td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(usuarios)}">
+            <td colspan="5" style="text-align: center;">No hay usuarios registrados.</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<script>
+    function filtrarTabla() {
+        let input = document.getElementById("buscador").value.toUpperCase();
+        let filas = document.getElementById("tablaUsuarios").getElementsByTagName("tr");
+
+        for (let i = 1; i < filas.length; i++) {
+            let celdas = filas[i].getElementsByTagName("td");
+            let coincidencia = false;
+
+            // Buscar en Código, Username y Rol (columnas 0, 1 y 2)
+            for (let j = 0; j < 3; j++) {
+                if (celdas[j] && celdas[j].innerText.toUpperCase().indexOf(input) > -1) {
+                    coincidencia = true;
+                    break;
+                }
+            }
+            filas[i].style.display = coincidencia ? "" : "none";
+        }
+    }
+</script>
+</body>
+</html>
