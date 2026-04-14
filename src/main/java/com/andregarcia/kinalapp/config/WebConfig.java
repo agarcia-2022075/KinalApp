@@ -1,5 +1,3 @@
-// Ubicación: C:\Spring_2022075\kinalapp\src\main\java\com\andregarcia\kinalapp\config\WebConfig.java
-
 package com.andregarcia.kinalapp.config;
 
 import org.springframework.context.annotation.Configuration;
