@@ -2,8 +2,10 @@ package com.andregarcia.kinalapp.service;
 
 import com.andregarcia.kinalapp.entity.DetalleVenta;
 import com.andregarcia.kinalapp.entity.Producto;
+import com.andregarcia.kinalapp.entity.Venta;
 import com.andregarcia.kinalapp.repository.DetalleVentaRepository;
 import com.andregarcia.kinalapp.repository.ProductoRepository;
+import com.andregarcia.kinalapp.repository.VentaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,10 +19,12 @@ public class DetalleVentaService implements IDetalleVentaService {
 
     private final DetalleVentaRepository detalleVentaRepository;
     private final ProductoRepository productoRepository;
+    private final VentaRepository ventaRepository; // Inyectamos el repositorio de ventas
 
-    public DetalleVentaService(DetalleVentaRepository detalleVentaRepository, ProductoRepository productoRepository) {
+    public DetalleVentaService(DetalleVentaRepository detalleVentaRepository, ProductoRepository productoRepository, VentaRepository ventaRepository) {
         this.detalleVentaRepository = detalleVentaRepository;
         this.productoRepository = productoRepository;
+        this.ventaRepository = ventaRepository;
     }
 
     @Override
@@ -32,7 +36,21 @@ public class DetalleVentaService implements IDetalleVentaService {
     @Override
     public DetalleVenta guardar(DetalleVenta detalleVenta) {
         validarRelaciones(detalleVenta);
+
+        // 1. Recuperamos la venta real para evitar el error de llave foránea en SQL
+        Venta ventaReal = ventaRepository.findById(detalleVenta.getVenta().getCodigoVenta())
+                .orElseThrow(() -> new RuntimeException("La venta no existe"));
+
+        detalleVenta.setVenta(ventaReal);
+
+        // 2. Calculamos los valores del producto
         calcularValores(detalleVenta);
+
+        // 3. Sumamos el dinero al total de la factura principal y actualizamos
+        BigDecimal nuevoTotal = ventaReal.getTotal().add(detalleVenta.getSubtotal());
+        ventaReal.setTotal(nuevoTotal);
+        ventaRepository.save(ventaReal);
+
         return detalleVentaRepository.save(detalleVenta);
     }
 
@@ -48,9 +66,15 @@ public class DetalleVentaService implements IDetalleVentaService {
         }
         detalleVenta.setCodigoDetalleVenta(id);
         validarRelaciones(detalleVenta);
+
+        Venta ventaReal = ventaRepository.findById(detalleVenta.getVenta().getCodigoVenta())
+                .orElseThrow(() -> new RuntimeException("La venta no existe"));
+        detalleVenta.setVenta(ventaReal);
+
         calcularValores(detalleVenta);
         return detalleVentaRepository.save(detalleVenta);
     }
+
     @Override
     public void eliminar(Long id) {
         if (!detalleVentaRepository.existsById(id)) {
@@ -64,6 +88,7 @@ public class DetalleVentaService implements IDetalleVentaService {
     public boolean existeId(Long id) {
         return detalleVentaRepository.existsById(id);
     }
+
     private void validarRelaciones(DetalleVenta detalleVenta) {
         if (detalleVenta.getVenta() == null || detalleVenta.getVenta().getCodigoVenta() == null) {
             throw new IllegalArgumentException("El detalle debe estar asociado a una Venta (Código obligatorio).");
@@ -75,7 +100,6 @@ public class DetalleVentaService implements IDetalleVentaService {
             throw new IllegalArgumentException("La cantidad de productos debe ser mayor a cero.");
         }
     }
-
 
     private void calcularValores(DetalleVenta detalleVenta) {
         Producto productoDb = productoRepository.findById(detalleVenta.getProducto().getCodigoProducto())
