@@ -40,12 +40,11 @@ public class VentaService implements IVentaService {
             venta.setEstado(1); // Activa por defecto
         }
 
-        // Asignar fecha actual si no viene en el JSON
         if (venta.getFechaVenta() == null) {
             venta.setFechaVenta(LocalDate.now());
         }
 
-        // Iniciar el total en 0 si no viene especificado
+
         if (venta.getTotal() == null) {
             venta.setTotal(BigDecimal.ZERO);
         }
@@ -88,7 +87,7 @@ public class VentaService implements IVentaService {
         return ventaRepository.existsById(id);
     }
 
-    // Validaciones estrictas
+    // validaciones
     private void validarVenta(Venta venta) {
         // Validar que la venta tenga un cliente asignado y que el DPI no sea nulo
         if (venta.getCliente() == null || venta.getCliente().getDpiCliente() == null || venta.getCliente().getDpiCliente().trim().isEmpty()) {
