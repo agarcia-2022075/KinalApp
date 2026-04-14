@@ -2,71 +2,79 @@ package com.andregarcia.kinalapp.controller;
 
 import com.andregarcia.kinalapp.entity.Usuario;
 import com.andregarcia.kinalapp.service.IUsuarioService;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@RestController
+@Controller // Cambiado de @RestController a @Controller para manejar vistas HTML
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
+    // Como buena práctica, la inyección de dependencias se hace por el constructor
+    // El Controlador solo debe tener conexión con el servicio
     private final IUsuarioService usuarioService;
 
     public UsuarioController(IUsuarioService usuarioService) {
         this.usuarioService = usuarioService;
     }
+
+    // GET: Lista todos los usuarios y los envía a la vista 'usuarios/listar-usuarios.html'
     @GetMapping
-    public ResponseEntity<List<Usuario>> listar() {
-        return ResponseEntity.ok(usuarioService.listarTodos());
+    public String listar(Model model) {
+        model.addAttribute("usuarios", usuarioService.listarTodos());
+        return "usuarios/listar-usuarios";
     }
 
+    // GET: Filtra y muestra solo usuarios con estado activo
     @GetMapping("/activos")
-    public ResponseEntity<List<Usuario>> listarActivos() {
-        return ResponseEntity.ok(usuarioService.listarActivos());
+    public String listarActivos(Model model) {
+        model.addAttribute("usuarios", usuarioService.listarActivos());
+        return "usuarios/listar-usuarios";
     }
 
+    // GET: Busca un usuario específico para mostrar su perfil o detalles
     @GetMapping("/{id}")
-    public ResponseEntity<Usuario> buscarPorId(@PathVariable Long id) {
-        return usuarioService.buscarPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public String buscarPorId(@PathVariable Long id, Model model) {
+        usuarioService.buscarPorId(id).ifPresent(usuario -> model.addAttribute("usuario", usuario));
+        return "usuarios/detalle-usuario";
     }
+
+    // POST: Recibe los datos del formulario (ModelAttribute) y guarda el nuevo usuario
     @PostMapping
-    public ResponseEntity<?> guardar(@RequestBody Usuario usuario) {
+    public String guardar(@ModelAttribute Usuario usuario) {
         try {
-            Usuario nuevoUsuario = usuarioService.guardar(usuario);
-            return new ResponseEntity<>(nuevoUsuario, HttpStatus.CREATED);
+            usuarioService.guardar(usuario);
+            // Tras un éxito, redirigimos a la lista para ver el cambio
+            return "redirect:/usuarios";
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage()); // Devuelve el error de validación (ej. email inválido)
-        }
-    }
-    @PutMapping("/{id}")
-    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Usuario usuario) {
-        try {
-            if (!usuarioService.existeId(id)) {
-                return ResponseEntity.notFound().build();
-            }
-            Usuario usuarioActualizado = usuarioService.actualizar(id, usuario);
-            return ResponseEntity.ok(usuarioActualizado);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            // Si hay error de validación, enviamos un parámetro de error en la URL
+            return "redirect:/usuarios?error=true";
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    // PUT: Actualiza los datos de un usuario existente
+    @PutMapping("/{id}")
+    public String actualizar(@PathVariable Long id, @ModelAttribute Usuario usuario) {
         try {
-            if (!usuarioService.existeId(id)) {
-                return ResponseEntity.notFound().build();
+            if (usuarioService.existeId(id)) {
+                usuarioService.actualizar(id, usuario);
             }
-            usuarioService.eliminar(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return "redirect:/usuarios";
+        } catch (Exception e) {
+            return "redirect:/usuarios?error=true";
+        }
+    }
+
+    // DELETE: Elimina (o desactiva, según tu lógica de servicio) un usuario
+    @DeleteMapping("/{id}")
+    public String eliminar(@PathVariable Long id) {
+        try {
+            if (usuarioService.existeId(id)) {
+                usuarioService.eliminar(id);
+            }
+            return "redirect:/usuarios";
+        } catch (Exception e) {
+            return "redirect:/usuarios?error=true";
         }
     }
 }
