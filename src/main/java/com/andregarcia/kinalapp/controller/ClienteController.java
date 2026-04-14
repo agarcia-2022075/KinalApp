@@ -1,3 +1,5 @@
+// Ubicación: C:\Spring_2022075\kinalapp\src\main\java\com\andregarcia\kinalapp\controller\ClienteController.java
+
 package com.andregarcia.kinalapp.controller;
 
 import com.andregarcia.kinalapp.entity.Cliente;
@@ -6,7 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-@Controller // Cambiado de @RestController a @Controller 
+@Controller
 @RequestMapping("/clientes")
 public class ClienteController {
 
@@ -20,21 +22,21 @@ public class ClienteController {
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("clientes", clienteService.listarTodos());
-        return "clientes/listar-clientes"; // Retorna el archivo HTML
+        return "listar-clientes"; // Corregido a la raíz
     }
 
     // GET: Muestra la vista solo con clientes activos
     @GetMapping("/activos")
     public String listarActivos(Model model) {
         model.addAttribute("clientes", clienteService.listarActivos());
-        return "clientes/listar-clientes";
+        return "listar-clientes"; // Corregido a la raíz
     }
 
     // GET: Busca un cliente por DPI y lo envía a la vista
     @GetMapping("/{dpi}")
     public String buscarPorId(@PathVariable String dpi, Model model) {
         clienteService.buscarPorDPI(dpi).ifPresent(cliente -> model.addAttribute("cliente", cliente));
-        return "clientes/detalle-cliente";
+        return "detalle-cliente"; // Corregido a la raíz
     }
 
     // POST: Guarda un nuevo cliente desde un formulario HTML
@@ -42,7 +44,7 @@ public class ClienteController {
     public String guardar(@ModelAttribute Cliente cliente) {
         try {
             clienteService.guardar(cliente);
-            return "redirect:/clientes"; // Redirige a la lista tras guardar con éxito
+            return "redirect:/clientes";
         } catch (IllegalArgumentException e) {
             return "redirect:/clientes?error=true";
         }
