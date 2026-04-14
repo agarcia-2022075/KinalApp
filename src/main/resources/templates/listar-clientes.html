@@ -2,7 +2,6 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestión de Clientes - KinalApp</title>
     <link rel="stylesheet" th:href="@{/main.css}">
 </head>
@@ -10,14 +9,12 @@
 
 <nav class="navbar">
     <div class="logo">KinalApp POS</div>
-
     <ul class="nav-links">
         <li><a th:href="@{/clientes}">Clientes</a></li>
         <li><a th:href="@{/productos}">Productos</a></li>
         <li><a th:href="@{/usuarios}">Usuarios</a></li>
         <li><a th:href="@{/ventas}">Ventas</a></li>
     </ul>
-
     <div class="user-info">
         <span>Bienvenido, <b th:text="${session.usuarioLogueado}">Usuario</b></span>
         <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
@@ -27,7 +24,17 @@
 <div class="container">
     <h2>Listado de Clientes</h2>
 
-    <table>
+    <div class="toolbar">
+        <a th:href="@{/clientes/nuevo}" class="btn-nuevo" style="margin-bottom:0;">+ Añadir Nuevo</a>
+
+        <div class="filtros">
+            <input type="text" id="buscador" class="buscador-input" placeholder="🔍 Buscar por DPI o Nombre..." onkeyup="filtrarTabla()">
+            <a th:href="@{/clientes}" class="btn-editar" style="background-color: #17a2b8; color: white; padding: 10px;">Todos</a>
+            <a th:href="@{/clientes/activos}" class="btn-editar" style="background-color: #28a745; color: white; padding: 10px;">Solo Activos</a>
+        </div>
+    </div>
+
+    <table id="tablaClientes">
         <thead>
         <tr>
             <th>DPI</th>
@@ -35,6 +42,7 @@
             <th>Apellido</th>
             <th>Dirección</th>
             <th>Estado</th>
+            <th>Acciones</th>
         </tr>
         </thead>
         <tbody>
@@ -43,15 +51,44 @@
             <td th:text="${cliente.nombreCliente}"></td>
             <td th:text="${cliente.apellidoCliente}"></td>
             <td th:text="${cliente.direccion}"></td>
-            <td th:text="${cliente.estado == 1 ? 'Activo' : 'Inactivo'}"></td>
+            <td>
+                        <span th:text="${cliente.estado == 1 ? 'Activo' : 'Inactivo'}"
+                              th:style="${cliente.estado == 1 ? 'color: green; font-weight: bold;' : 'color: red;'}">
+                        </span>
+            </td>
+            <td>
+                <a th:href="@{/clientes/editar/{dpi}(dpi=${cliente.dpiCliente})}" class="btn-editar">Editar</a>
+                <a th:href="@{/clientes/eliminar/{dpi}(dpi=${cliente.dpiCliente})}" class="btn-eliminar"
+                   onclick="return confirm('¿Está seguro que desea eliminar este cliente de forma permanente?');">Eliminar</a>
+            </td>
         </tr>
-
         <tr th:if="${#lists.isEmpty(clientes)}">
-            <td colspan="5" style="text-align: center;">No hay clientes registrados en el sistema.</td>
+            <td colspan="6" style="text-align: center;">No hay clientes registrados en esta vista.</td>
         </tr>
         </tbody>
     </table>
 </div>
 
+<script>
+    function filtrarTabla() {
+        let input = document.getElementById("buscador").value.toUpperCase();
+        let filas = document.getElementById("tablaClientes").getElementsByTagName("tr");
+
+        // Recorremos desde 1 para no ocultar los títulos (thead)
+        for (let i = 1; i < filas.length; i++) {
+            let celdas = filas[i].getElementsByTagName("td");
+            let coincidencia = false;
+
+            // Solo buscar en las primeras 4 columnas (DPI, Nombre, Apellido, Dirección)
+            for (let j = 0; j < 4; j++) {
+                if (celdas[j] && celdas[j].innerText.toUpperCase().indexOf(input) > -1) {
+                    coincidencia = true;
+                    break;
+                }
+            }
+            filas[i].style.display = coincidencia ? "" : "none";
+        }
+    }
+</script>
 </body>
 </html>
