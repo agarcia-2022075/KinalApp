@@ -1,149 +1,71 @@
-# KinalApp
+# KinalApp 
+**Sistema Integral de Gestión de Inventario y Ventas (POS)**
 
-Sistema de gestión de inventario y ventas desarrollado con Spring Boot. La aplicación expone una API RESTful para la administración eficiente de entidades clave como clientes, productos, usuarios y el proceso transaccional de ventas.
+KinalApp es una solución Full-Stack diseñada para la administración eficiente de comercios. El sistema integra un backend potente basado en una arquitectura RESTful con un frontend dinámico desarrollado en Thymeleaf, permitiendo una experiencia de usuario fluida desde el inicio de sesión hasta la facturación final.
 
-## Tecnologías utilizadas
+## 🚀 Tecnologías Utilizadas
+
+### Backend (El Motor)
 * **Java 17**
-* **SpringBoot 3.2.2**
-* **Maven** (Gestor de dependencias)
-* **MySQL** (Sistema Gestor de Base de Datos)
+* **Spring Boot 3.2.2**
+* **Spring Data JPA** (Persistencia de datos)
+* **Maven** (Gestión de dependencias)
+* **MySQL** (Base de Datos Relacional)
 
-## Flujo Principal y Lógica de Negocio
+### Frontend (La Interfaz)
+* **Thymeleaf** (Motor de plantillas dinámicas)
+* **HTML5 & CSS3** (Diseño responsivo y personalizado)
+* **Bootstrap 5 & FontAwesome** (Estilizado y componentes visuales)
+* **JavaScript** (Validaciones y animaciones de UI)
+##  Acceso al Sistema (Credenciales)
 
-El sistema está diseñado bajo una arquitectura relacional donde cada módulo interactúa para garantizar la integridad de los datos financieros:
+Para facilitar las pruebas en entornos nuevos o migraciones de base de datos, el sistema cuenta con un **Usuario Maestro** de respaldo configurado directamente en el controlador de autenticación:
 
-1. **Gestión de Usuarios y Clientes:**
-   * **Usuarios (`/usuarios`):** Son los empleados o administradores del sistema. Deben ser registrados previamente con correos válidos y roles específicos para poder operar las ventas.
-   * **Clientes (`/clientes`):** Se registran utilizando su DPI como llave principal. Un cliente debe existir en el sistema para poder facturarle una venta.
-
-2. **Gestión de Inventario (Productos):**
-   * **Productos (`/productos`):** Módulo encargado del inventario. La API restringe mediante validaciones estrictas la creación de productos con inventario negativo o precios nulos, protegiendo así la coherencia de la tienda.
-
-3. **Proceso Transaccional (Ventas y Detalles):**
-   * **Creación de la Venta (`/ventas`):** El flujo de compra inicia cuando un **Usuario** (vendedor) abre una **Venta** para un **Cliente**. El sistema de backend está automatizado para asignar la fecha actual (`LocalDate.now()`) y establecer un total inicial de cero.
-   * **Asignación de Detalles (`/detalles`):** El núcleo automatizado de la aplicación. Al agregar productos a una venta, el cliente web o Postman solo necesita enviar la cantidad deseada y los códigos del producto y la venta. **El backend se encarga automáticamente de buscar el precio real del producto en la base de datos y calcular el subtotal matemático**, evitando cualquier alteración de precios desde el lado del cliente.
-
-## Requisitos Previos
-Antes de ejecutar la aplicación, debe tener instalado:
-* JDK 17 o superior.
-* Maven instalado (o puede usar el Wrapper incluido en el proyecto).
-* Una instancia activa de MySQL ejecutándose en el puerto 3306.
-
-## Instalación y Ejecución
-
-**1. Clonar el repositorio**
-Abra su terminal y ejecute el siguiente comando para clonar el proyecto:
-`git clone https://github.com/agarcia-2022075/KinalApp.git`
-
-**2. Navegar al directorio del proyecto**
-`cd KinalApp`
-
-**3. Configuración de la Base de Datos**
-El proyecto está configurado para crear la base de datos automáticamente (`dbClientes_in5am`). Si sus credenciales locales de MySQL son diferentes, por favor actualice las siguientes líneas en el archivo `src/main/resources/application.properties`:
-* `spring.datasource.username= SU_USUARIO`
-* `spring.datasource.password= SU_CONTRASEÑA`
-
-**4. Ejecutar la aplicación**
-Levante el servidor de Spring Boot con el siguiente comando:
-`mvn spring-boot:run`
+* **Usuario:** `admin`
+* **Contraseña:** `admin123`
 
 ---
 
-## Endpoints Disponibles (Para pruebas en Postman)
-El servidor se levanta por defecto en el puerto **8082**. A continuación, las rutas exactas y ejemplos JSON listos para copiar y pegar.
+##  Arquitectura del Proyecto (Capa por Capa)
 
-### 1. Módulo de Clientes (`/clientes`)
-* **GET Todos:** `http://localhost:8082/clientes`
-* **GET Activos:** `http://localhost:8082/clientes/activos`
-* **GET por ID:** `http://localhost:8082/clientes/{dpi}`
-* **DELETE por ID:** `http://localhost:8082/clientes/{dpi}`
-* **POST (Crear) / PUT (Actualizar):** `http://localhost:8082/clientes` *(Para PUT agregar el /{dpi} en la URL)*
+El proyecto sigue el patrón de diseño **MVC (Modelo-Vista-Controlador)**, organizado de la siguiente manera:
 
-**Ejemplo de JSON (POST/PUT):**
-```json
-{
-  "dpiCliente": "1000200030004",
-  "nombreCliente": "Lionel",
-  "apellidoCliente": "Messi",
-  "direccion": "Miami, FL",
-  "estado": 1
-}
-```
+### 1. Capa de Entidad (Model/Entity)
+Define la estructura de las tablas en MySQL mediante **JPA (Jakarta Persistence)**.
+* **Ejemplo:** La entidad `Venta` mapea campos como fecha, total y estado, estableciendo relaciones de tipo `ManyToOne` con Clientes y Usuarios para la integridad referencial.
 
-### 2. Módulo de Usuarios (`/usuarios`)
-* **GET Todos:** `http://localhost:8082/usuarios`
-* **GET Activos:** `http://localhost:8082/usuarios/activos`
-* **GET por ID:** `http://localhost:8082/usuarios/{id}`
-* **DELETE por ID:** `http://localhost:8082/usuarios/{id}`
-* **POST (Crear) / PUT (Actualizar):** `http://localhost:8082/usuarios` *(Para PUT agregar el /{id} en la URL)*
+### 2. Capa de Repositorio (Persistence)
+Utiliza **Spring Data JPA** para la comunicación con la base de datos.
+* **Funcionalidad:** Implementa interfaces como `UsuarioRepository` que permiten realizar operaciones CRUD y consultas personalizadas, como la búsqueda de registros por su estado activo.
 
-**Ejemplo de JSON (POST/PUT):**
-```json
-{
-  "username": "admin.01",
-  "password": "SecurePassword123!",
-  "email": "admin@kinal.edu.gt",
-  "rol": "ADMIN",
-  "estado": 1
-}
-```
+### 3. Capa de Servicio (Business Logic)
+Es el núcleo del sistema donde se aplican las reglas de negocio y validaciones antes de persistir los datos.
+* **Validaciones Estrictas:** Los servicios como `ProductoService` impiden el registro de precios negativos o nombres vacíos.
+* **Gestión de Inventario:** El `DetalleVentaService` descuenta automáticamente el stock del producto al realizar una venta y valida que existan unidades suficientes en bodega.
 
-### 3. Módulo de Productos (`/productos`)
-* **GET Todos:** `http://localhost:8082/productos`
-* **GET Activos:** `http://localhost:8082/productos/activos`
-* **GET por ID:** `http://localhost:8082/productos/{id}`
-* **DELETE por ID:** `http://localhost:8082/productos/{id}`
-* **POST (Crear) / PUT (Actualizar):** `http://localhost:8082/productos` *(Para PUT agregar el /{id} en la URL)*
+### 4. Capa de Controlador (Orchestration)
+Maneja las peticiones HTTP y la navegación entre vistas.
+* **UX Mejorada:** Tras crear la cabecera de una factura, el controlador redirige al usuario directamente al Punto de Venta para agilizar el proceso.
+* **Manejo de Errores:** En caso de fallos de validación, el controlador retiene los datos en el formulario para evitar que el usuario deba reescribirlos.
 
-**Ejemplo de JSON (POST/PUT):**
-```json
-{
-  "nombreProducto": "Laptop Dell XPS",
-  "precio": 1250.50,
-  "stock": 15,
-  "estado": 1
-}
-```
+### 5. Capa de Vista (Frontend)
+Utiliza el motor de plantillas **Thymeleaf** para renderizar contenido dinámico.
+* Integración de componentes de Bootstrap para el diseño visual y FontAwesome para la iconografía profesional.
 
-### 4. Módulo de Ventas (`/ventas`)
-* **GET Todos:** `http://localhost:8082/ventas`
-* **GET Activos:** `http://localhost:8082/ventas/activos`
-* **GET por ID:** `http://localhost:8082/ventas/{id}`
-* **DELETE por ID:** `http://localhost:8082/ventas/{id}`
-* **POST (Crear) / PUT (Actualizar):** `http://localhost:8082/ventas` *(Para PUT agregar el /{id} en la URL)*
+---
 
-*(Nota: Asigna automáticamente la fecha del sistema y el total inicial en 0)*
+## 🖼️ Guía de Funcionamiento y Vistas
 
-**Ejemplo de JSON (POST/PUT):**
-```json
-{
-  "estado": 1,
-  "cliente": {
-    "dpiCliente": "1000200030004"
-  },
-  "usuario": {
-    "codigoUsuario": 1
-  }
-}
-```
+| Módulo | Captura de Imagen (Colocar Aquí)                                           | Funcionamiento Detallado |
+| :--- |:---------------------------------------------------------------------------| :--- |
+| **Login** | *![img.png](src/main/resources/static/images/img.png)*                                                      | Pantalla de seguridad con validación de sesión. Si las credenciales fallan, muestra una alerta dinámica de error. |
+| **Gestión de Usuarios** | *![img_2.png](src/main/resources/static/images/img_2.png) ![img_3.png](src/main/resources/static/images/img_3.png)*                          | Listado de empleados con filtros para ver solo activos o todos. Permite la creación y edición, requiriendo un correo con formato válido. |
+| **Inventario de Productos** | *![img_4.png](src/main/resources/static/images/img_4.png) ![img_5.png](src/main/resources/static/images/img_5.png)*                          | Catálogo de mercancía con control de stock. El frontend restringe mediante `min="0"` que se ingresen cantidades negativas. |
+| **Punto de Venta (POS)** | *![img_6.png](src/main/resources/static/images/img_6.png) ![img_7.png](src/main/resources/static/images/img_7.png) ![img_8.png](src/main/resources/static/images/img_8.png) ![img_9.png](src/main/resources/static/images/img_9.png)* | **Módulo interactivo:** Permite seleccionar productos y agregarlos a la factura actual. El sistema suma los subtotales automáticamente y bloquea la edición si la factura es marcada como "Anulada". |
 
-### 5. Módulo de Detalles de Venta (`/detalles`)
-* **GET Todos:** `http://localhost:8082/detalles`
-* **GET por ID:** `http://localhost:8082/detalles/{id}`
-* **DELETE por ID:** `http://localhost:8082/detalles/{id}`
-* **POST (Crear) / PUT (Actualizar):** `http://localhost:8082/detalles` *(Para PUT agregar el /{id} en la URL)*
+---
 
-*(Nota: El sistema busca el precio real del producto y calcula el subtotal automáticamente)*
 
-**Ejemplo de JSON (POST/PUT):**
-```json
-{
-  "cantidad": 2,
-  "producto": {
-    "codigoProducto": 1
-  },
-  "venta": {
-    "codigoVenta": 1
-  }
-}
-```
+---
+**Desarrollado por:** André Paolo García Valdéz - Carné 2022075  
+*5to Perito en Informática A - KINAL*
