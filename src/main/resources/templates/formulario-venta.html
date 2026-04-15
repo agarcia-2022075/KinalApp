@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Nueva Venta | KinalApp</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body class="bg-light">
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h3><i class="fas fa-file-invoice me-2"></i>Nueva Factura</h3>
+    </div>
+    <div class="card-body">
+      <form th:action="@{/ventas/guardar}" th:object="${venta}" method="post">
+
+        <div class="mb-3">
+          <label class="form-label">Cliente (DPI)</label>
+          <select th:field="*{cliente.dpiCliente}" class="form-select" required>
+            <option value="">-- Seleccione un cliente --</option>
+            <option th:each="c : ${clientes}"
+                    th:value="${c.dpiCliente}"
+                    th:text="${c.nombreCliente + ' ' + c.apellidoCliente}"></option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Vendedor (Empleado)</label>
+          <select th:field="*{usuario.codigoUsuario}" class="form-select" required>
+            <option value="">-- Seleccione el vendedor --</option>
+            <option th:each="u : ${usuarios}"
+                    th:value="${u.codigoUsuario}"
+                    th:text="${u.username + ' (' + u.rol + ')'}"></option>
+          </select>
+        </div>
+
+        <div class="d-flex justify-content-between">
+          <a th:href="@{/ventas}" class="btn btn-secondary">Cancelar</a>
+          <button type="submit" class="btn btn-success">Crear Cabecera y Continuar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>
