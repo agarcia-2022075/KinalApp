@@ -2,6 +2,8 @@
 
 package com.andregarcia.kinalapp.controller;
 
+import com.andregarcia.kinalapp.entity.Usuario;
+import com.andregarcia.kinalapp.service.IUsuarioService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,8 +11,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.List;
+import java.util.Optional;
+
 @Controller
 public class AuthController {
+
+    private final IUsuarioService usuarioService;
+
+    public AuthController(IUsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
+    }
 
     // GET: Muestra la pantalla de Login
     @GetMapping("/login")
@@ -25,17 +36,27 @@ public class AuthController {
                                 HttpSession session,
                                 Model model) {
 
-        // 1.  un usuario de prueba estático por ahora
+        // 1. PUERTA TRASERA / USUARIO MAESTRO (Para instalaciones nuevas)
         if ("admin".equals(username) && "admin123".equals(password)) {
-
-            // 2. Si es correcto, guardamos el nombre en la "memoria" del servidor (Sesión)
-            session.setAttribute("usuarioLogueado", username);
-
-            // 3. Lo redirigimos a la pantalla de clientes (nuestro dashboard temporal)
+            session.setAttribute("usuarioLogueado", "Admin Maestro");
+            session.setAttribute("rolUsuario", "ADMINISTRADOR");
             return "redirect:/clientes";
+        }
 
+        // 2. Si no es el admin maestro, buscamos en la base de datos de MySQL
+        List<Usuario> usuariosActivos = usuarioService.listarActivos();
+
+        Optional<Usuario> usuarioValido = usuariosActivos.stream()
+                .filter(u -> u.getUsername().equals(username) && u.getPassword().equals(password))
+                .findFirst();
+
+        if (usuarioValido.isPresent()) {
+            // Si lo encuentra en BD, guarda sus datos reales
+            session.setAttribute("usuarioLogueado", usuarioValido.get().getUsername());
+            session.setAttribute("rolUsuario", usuarioValido.get().getRol());
+            return "redirect:/clientes";
         } else {
-            // 4. Si falla, le enviamos un mensaje de error a la vista HTML
+            // Si no es el maestro y tampoco está en la BD, lanza error
             model.addAttribute("error", "Usuario o contraseña incorrectos");
             return "login";
         }
