@@ -2,88 +2,465 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Gestión de Usuarios - KinalApp</title>
-    <link rel="stylesheet" th:href="@{/main.css}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>KinalApp · Gestión de Usuarios</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F6F9;
+            color: #1e2a3a;
+            line-height: 1.5;
+        }
+
+        /* ========== NAVBAR (30% #2C3E50) ========== */
+        .navbar {
+            background-color: #2C3E50;
+            padding: 0.9rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            background-color: #E67E22;
+            border-radius: 8px;
+            padding: 4px 8px;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-img i {
+            font-size: 1.6rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: #E67E22;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background-color: rgba(255,255,255,0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+        }
+
+        .user-info span {
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout {
+            background-color: #E67E22;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-logout:hover {
+            background-color: #d35400;
+            transform: translateY(-1px);
+        }
+
+        /* ========== CONTENEDOR PRINCIPAL ========== */
+        .container {
+            max-width: 1400px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.03), 0 2px 6px rgba(0,0,0,0.05);
+            overflow-x: auto;
+            padding: 1.8rem 1.5rem 2rem 1.5rem;
+        }
+
+        .card-header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.8rem;
+            border-bottom: 2px solid #f0f2f5;
+            padding-bottom: 1rem;
+        }
+
+        .card-header h2 {
+            font-weight: 700;
+            font-size: 1.6rem;
+            color: #2C3E50;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header h2 i {
+            color: #E67E22;
+            font-size: 1.7rem;
+        }
+
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .btn-nuevo {
+            background-color: #27ae60;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-nuevo:hover {
+            background-color: #2ecc71;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(39,174,96,0.3);
+        }
+
+        .filtros {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .buscador-input {
+            padding: 0.6rem 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 2rem;
+            font-family: 'Inter', sans-serif;
+            width: 240px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .buscador-input:focus {
+            border-color: #E67E22;
+            box-shadow: 0 0 0 2px rgba(230,126,34,0.2);
+        }
+
+        .filtros a {
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 500;
+            font-size: 0.85rem;
+            background-color: #f1f5f9;
+            color: #2C3E50;
+            transition: all 0.2s;
+        }
+
+        .filtros a:hover {
+            background-color: #E67E22;
+            color: white;
+        }
+
+        .tabla-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+
+        th {
+            text-align: left;
+            padding: 1rem 0.8rem;
+            background-color: #f8fafc;
+            color: #2C3E50;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        td {
+            padding: 1rem 0.8rem;
+            border-bottom: 1px solid #edf2f7;
+            vertical-align: middle;
+        }
+
+        tr:hover td {
+            background-color: #fef9f0;
+        }
+
+        .estado-badge {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .estado-activo {
+            background-color: #e3f7ec;
+            color: #27ae60;
+        }
+
+        .estado-inactivo {
+            background-color: #fee2e2;
+            color: #e74c3c;
+        }
+
+        .rol-badge {
+            display: inline-block;
+            padding: 0.2rem 0.7rem;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .rol-admin {
+            background-color: #e8e2f7;
+            color: #6c3ab2;
+        }
+
+        .rol-cajero {
+            background-color: #e3f2fd;
+            color: #0d6efd;
+        }
+
+        .acciones {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-editar {
+            background-color: #E67E22;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-editar:hover {
+            background-color: #d35400;
+        }
+
+        .btn-eliminar {
+            background-color: #e74c3c;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-size: 0.75rem;
+            font-weight: 600;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .btn-eliminar:hover {
+            background-color: #c0392b;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 12px;
+                padding: 1rem;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .buscador-input {
+                width: 100%;
+            }
+            .card-header {
+                flex-direction: column;
+                align-items: start;
+                gap: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
 
 <nav class="navbar">
-    <div class="logo">KinalApp POS</div>
+    <div class="logo-area">
+        <div class="logo-img">
+            <img th:src="@{/images/logo.png}" alt="KinalApp Logo" style="height: 40px; width: auto;">
+        </div>
+        <div class="logo-text">KinalApp</div>
+    </div>
     <ul class="nav-links">
-        <li><a th:href="@{/clientes}">Clientes</a></li>
-        <li><a th:href="@{/productos}">Productos</a></li>
-        <li><a th:href="@{/usuarios}">Usuarios</a></li>
-        <li><a th:href="@{/ventas}">Ventas</a></li>
+        <li><a th:href="@{/clientes}"><i class="fas fa-users"></i> Clientes</a></li>
+        <li><a th:href="@{/productos}"><i class="fas fa-boxes"></i> Productos</a></li>
+        <li><a th:href="@{/usuarios}"><i class="fas fa-user-cog"></i> Usuarios</a></li>
+        <li><a th:href="@{/ventas}"><i class="fas fa-shopping-cart"></i> Ventas</a></li>
     </ul>
     <div class="user-info">
-        <span>Bienvenido, <b th:text="${session.usuarioLogueado}">Usuario</b></span>
-        <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+        <span><i class="fas fa-user-circle"></i> <b th:text="${session.usuarioLogueado}">Usuario</b></span>
+        <a th:href="@{/logout}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
     </div>
 </nav>
 
 <div class="container">
-    <h2>Gestión de Usuarios (Empleados)</h2>
+    <div class="card">
+        <div class="card-header">
+            <h2><i class="fas fa-users-gear"></i> Usuarios del Sistema</h2>
+        </div>
 
-    <div class="toolbar">
-        <a th:href="@{/usuarios/nuevo}" class="btn-nuevo" style="margin-bottom:0;">+ Añadir Usuario</a>
+        <div class="toolbar">
+            <a th:href="@{/usuarios/nuevo}" class="btn-nuevo"><i class="fas fa-plus-circle"></i> Nuevo Usuario</a>
+            <div class="filtros">
+                <input type="text" id="buscador" class="buscador-input" placeholder="🔍 Buscar por usuario o rol..." onkeyup="filtrarTabla()">
+                <a th:href="@{/usuarios}"><i class="fas fa-list"></i> Todos</a>
+                <a th:href="@{/usuarios/activos}"><i class="fas fa-check-circle"></i> Solo Activos</a>
+            </div>
+        </div>
 
-        <div class="filtros">
-            <input type="text" id="buscador" class="buscador-input" placeholder="🔍 Buscar por Usuario o Rol..." onkeyup="filtrarTabla()">
-            <a th:href="@{/usuarios}" class="btn-editar" style="background-color: #17a2b8; color: white; padding: 10px;">Todos</a>
-            <a th:href="@{/usuarios/activos}" class="btn-editar" style="background-color: #28a745; color: white; padding: 10px;">Solo Activos</a>
+        <div class="tabla-responsive">
+            <table id="tablaUsuarios">
+                <thead>
+                <tr>
+                    <th>Código</th>
+                    <th>Usuario (Username)</th>
+                    <th>Email</th>
+                    <th>Rol</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="usuario : ${usuarios}">
+                    <td th:text="${usuario.codigoUsuario}">1</td>
+                    <td th:text="${usuario.username}">admin01</td>
+                    <td th:text="${usuario.email}">admin@kinal.edu.gt</td>
+                    <td>
+                        <span th:if="${usuario.rol == 'ADMINISTRADOR'}" class="rol-badge rol-admin">
+                            <i class="fas fa-shield-alt"></i> Administrador
+                        </span>
+                        <span th:if="${usuario.rol == 'CAJERO'}" class="rol-badge rol-cajero">
+                            <i class="fas fa-cash-register"></i> Cajero
+                        </span>
+                    </td>
+                    <td>
+                        <span th:if="${usuario.estado == 1}" class="estado-badge estado-activo">
+                            <i class="fas fa-circle" style="font-size: 0.5rem; vertical-align: middle;"></i> Activo
+                        </span>
+                        <span th:if="${usuario.estado == 0}" class="estado-badge estado-inactivo">
+                            <i class="fas fa-circle" style="font-size: 0.5rem; vertical-align: middle;"></i> Inactivo
+                        </span>
+                    </td>
+                    <td class="acciones">
+                        <a th:href="@{/usuarios/editar/{id}(id=${usuario.codigoUsuario})}" class="btn-editar">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <a th:href="@{/usuarios/eliminar/{id}(id=${usuario.codigoUsuario})}" class="btn-eliminar"
+                           onclick="return confirm('¿Eliminar permanentemente este usuario?')">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </a>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(usuarios)}">
+                    <td colspan="6" class="empty-message">No hay usuarios registrados. <a th:href="@{/usuarios/nuevo}">Crear el primero</a></td>
+                </tr>
+                </tbody>
+            </table>
         </div>
     </div>
-
-    <table id="tablaUsuarios">
-        <thead>
-        <tr>
-            <th>Código</th>
-            <th>Usuario (Username)</th>
-            <th>Rol</th>
-            <th>Estado</th>
-            <th>Acciones</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="usuario : ${usuarios}">
-            <td th:text="${usuario.codigoUsuario}"></td>
-            <td th:text="${usuario.username}"></td>
-            <td th:text="${usuario.rol}"></td>
-            <td>
-                        <span th:text="${usuario.estado == 1 ? 'Activo' : 'Inactivo'}"
-                              th:style="${usuario.estado == 1 ? 'color: green; font-weight: bold;' : 'color: red;'}">
-                        </span>
-            </td>
-            <td>
-                <a th:href="@{/usuarios/editar/{id}(id=${usuario.codigoUsuario})}" class="btn-editar">Editar</a>
-                <a th:href="@{/usuarios/eliminar/{id}(id=${usuario.codigoUsuario})}" class="btn-eliminar"
-                   onclick="return confirm('¿Está seguro que desea eliminar este usuario del sistema?');">Eliminar</a>
-            </td>
-        </tr>
-        <tr th:if="${#lists.isEmpty(usuarios)}">
-            <td colspan="5" style="text-align: center;">No hay usuarios registrados.</td>
-        </tr>
-        </tbody>
-    </table>
 </div>
 
 <script>
     function filtrarTabla() {
         let input = document.getElementById("buscador").value.toUpperCase();
         let filas = document.getElementById("tablaUsuarios").getElementsByTagName("tr");
-
         for (let i = 1; i < filas.length; i++) {
             let celdas = filas[i].getElementsByTagName("td");
-            let coincidencia = false;
-
-            // Buscar en Código, Username y Rol (columnas 0, 1 y 2)
-            for (let j = 0; j < 3; j++) {
-                if (celdas[j] && celdas[j].innerText.toUpperCase().indexOf(input) > -1) {
-                    coincidencia = true;
-                    break;
-                }
-            }
-            filas[i].style.display = coincidencia ? "" : "none";
+            let coincide = false;
+            // Buscar en Username (columna 1) y Rol (columna 3)
+            if (celdas[1] && celdas[1].innerText.toUpperCase().indexOf(input) > -1) coincide = true;
+            if (celdas[3] && celdas[3].innerText.toUpperCase().indexOf(input) > -1) coincide = true;
+            filas[i].style.display = coincide ? "" : "none";
         }
     }
 </script>

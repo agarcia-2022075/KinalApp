@@ -2,101 +2,481 @@
 <html xmlns:th="http://www.thymeleaf.org" lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Punto de Venta - KinalApp</title>
-  <link rel="stylesheet" th:href="@{/main.css}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>KinalApp · Punto de Venta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    .pos-container { display: flex; gap: 20px; margin-top: 20px; }
-    .pos-panel { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); width: 100%; }
-    .pos-header { border-bottom: 2px solid #0056b3; padding-bottom: 15px; margin-bottom: 15px; }
-    .total-display { font-size: 2em; color: #28a745; text-align: right; font-weight: bold; margin-top: 20px; }
-    .btn-agregar { background-color: #17a2b8; color: white; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; width: 100%; margin-top: 10px;}
-    .btn-agregar:hover { background-color: #138496; }
-    .input-inline { display: flex; gap: 10px; }
-    .input-inline > div { flex: 1; }
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #F4F6F9;
+        color: #1e2a3a;
+        line-height: 1.5;
+    }
+
+    /* ========== NAVBAR (30% #2C3E50) ========== */
+    .navbar {
+        background-color: #2C3E50;
+        padding: 0.9rem 2rem;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .logo-area {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .logo-img {
+        height: 40px;
+        width: auto;
+        background-color: #E67E22;
+        border-radius: 8px;
+        padding: 4px 8px;
+        color: white;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .logo-img i {
+        font-size: 1.6rem;
+    }
+
+    .logo-text {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: white;
+        letter-spacing: -0.3px;
+    }
+
+    .nav-links {
+        display: flex;
+        gap: 1.5rem;
+        list-style: none;
+    }
+
+    .nav-links a {
+        color: #ecf0f1;
+        text-decoration: none;
+        font-weight: 500;
+        transition: color 0.2s;
+        font-size: 0.95rem;
+    }
+
+    .nav-links a:hover {
+        color: #E67E22;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+        background-color: rgba(255,255,255,0.1);
+        padding: 0.4rem 1rem;
+        border-radius: 40px;
+    }
+
+    .user-info span {
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    .btn-logout {
+        background-color: #E67E22;
+        color: white;
+        padding: 6px 14px;
+        border-radius: 30px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.8rem;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-logout:hover {
+        background-color: #d35400;
+        transform: translateY(-1px);
+    }
+
+    /* ========== CONTENEDOR PRINCIPAL ========== */
+    .container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+
+    .venta-header {
+        background: white;
+        border-radius: 1rem;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .venta-header h3 {
+        font-weight: 600;
+        color: #2C3E50;
+    }
+
+    .venta-header span {
+        color: #E67E22;
+        font-weight: 700;
+    }
+
+    .badge-estado {
+        padding: 0.3rem 1rem;
+        border-radius: 2rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+    }
+
+    .badge-activa {
+        background-color: #e3f7ec;
+        color: #27ae60;
+    }
+
+    .badge-anulada {
+        background-color: #fee2e2;
+        color: #e74c3c;
+    }
+
+    /* Grid de dos columnas */
+    .pos-grid {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 1.5rem;
+    }
+
+    /* Panel izquierdo: agregar producto */
+    .panel-agregar {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .panel-agregar h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        color: #2C3E50;
+        border-left: 4px solid #E67E22;
+        padding-left: 0.8rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.2rem;
+    }
+
+    label {
+        display: block;
+        font-weight: 500;
+        font-size: 0.8rem;
+        margin-bottom: 0.3rem;
+        color: #2C3E50;
+    }
+
+    select, input {
+        width: 100%;
+        padding: 0.7rem 1rem;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9rem;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 1rem;
+        background-color: #fefefe;
+        transition: all 0.2s;
+        outline: none;
+    }
+
+    select:focus, input:focus {
+        border-color: #E67E22;
+        box-shadow: 0 0 0 3px rgba(230,126,34,0.1);
+    }
+
+    .btn-agregar {
+        width: 100%;
+        background-color: #E67E22;
+        color: white;
+        border: none;
+        padding: 0.7rem;
+        border-radius: 2rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .btn-agregar:hover {
+        background-color: #d35400;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 12px rgba(230,126,34,0.3);
+    }
+
+    .btn-agregar:disabled {
+        background-color: #bdc3c7;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* Panel derecho: resumen */
+    .panel-resumen {
+        background: white;
+        border-radius: 1.5rem;
+        padding: 1.5rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .panel-resumen h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        color: #2C3E50;
+        border-left: 4px solid #E67E22;
+        padding-left: 0.8rem;
+    }
+
+    .cliente-info {
+        background-color: #f8fafc;
+        padding: 0.8rem;
+        border-radius: 1rem;
+        margin-bottom: 1.5rem;
+        font-size: 0.85rem;
+    }
+
+    .cliente-info p {
+        margin: 0.2rem 0;
+    }
+
+    .tabla-detalle {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8rem;
+    }
+
+    .tabla-detalle th {
+        text-align: left;
+        padding: 0.6rem 0.4rem;
+        background-color: #f1f5f9;
+        color: #2C3E50;
+        font-weight: 600;
+    }
+
+    .tabla-detalle td {
+        padding: 0.6rem 0.4rem;
+        border-bottom: 1px solid #edf2f7;
+    }
+
+    .total-final {
+        margin-top: 1.5rem;
+        text-align: right;
+        padding-top: 1rem;
+        border-top: 2px solid #e2e8f0;
+    }
+
+    .total-final .label {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #2C3E50;
+    }
+
+    .total-final .amount {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: #27ae60;
+    }
+
+    .acciones-venta {
+        display: flex;
+        gap: 1rem;
+        justify-content: flex-end;
+        margin-top: 1.5rem;
+    }
+
+    .btn-volver {
+        background-color: #ecf0f1;
+        color: #2C3E50;
+        text-decoration: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 2rem;
+        font-weight: 600;
+        font-size: 0.85rem;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .btn-volver:hover {
+        background-color: #d5dbdf;
+    }
+
+    .mensaje-bloqueo {
+        background-color: #fee2e2;
+        color: #c0392b;
+        padding: 1rem;
+        border-radius: 1rem;
+        text-align: center;
+        margin-bottom: 1rem;
+    }
+
+    @media (max-width: 900px) {
+        .pos-grid {
+            grid-template-columns: 1fr;
+        }
+        .navbar {
+            flex-direction: column;
+            gap: 12px;
+            padding: 1rem;
+        }
+        .nav-links {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+    }
   </style>
 </head>
 <body>
 
 <nav class="navbar">
-  <div class="logo">KinalApp POS</div>
+  <div class="logo-area">
+    <div class="logo-img">
+      <img th:src="@{/images/logo.png}" alt="KinalApp Logo" style="height: 40px; width: auto;">
+    </div>
+    <div class="logo-text">KinalApp</div>
+  </div>
   <ul class="nav-links">
-    <li><a th:href="@{/clientes}">Clientes</a></li>
-    <li><a th:href="@{/productos}">Productos</a></li>
-    <li><a th:href="@{/usuarios}">Usuarios</a></li>
-    <li><a th:href="@{/ventas}">Ventas (POS)</a></li>
+    <li><a th:href="@{/clientes}"><i class="fas fa-users"></i> Clientes</a></li>
+    <li><a th:href="@{/productos}"><i class="fas fa-boxes"></i> Productos</a></li>
+    <li><a th:href="@{/usuarios}"><i class="fas fa-user-cog"></i> Usuarios</a></li>
+    <li><a th:href="@{/ventas}"><i class="fas fa-shopping-cart"></i> Ventas</a></li>
   </ul>
   <div class="user-info">
-    <span>Cajero: <b th:text="${session.usuarioLogueado}">Usuario</b></span>
-    <a th:href="@{/logout}" class="btn-logout">Cerrar Sesión</a>
+    <span><i class="fas fa-user-circle"></i> <b th:text="${session.usuarioLogueado}">Usuario</b></span>
+    <a th:href="@{/logout}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
   </div>
 </nav>
 
 <div class="container">
-  <h2>Detalle de Venta #<span th:text="${venta.codigoVenta}"></span></h2>
-
-  <div th:if="${venta.estado == 0}" style="background-color: #f8d7da; color: #721c24; padding: 15px; border-radius: 5px; border: 1px solid #f5c6cb; margin-bottom: 20px; font-weight: bold;">
-    <i class="fas fa-lock me-2"></i> Esta factura ha sido ANULADA. Por seguridad fiscal, no se pueden realizar modificaciones ni agregar productos.
+  <!-- Cabecera de la venta -->
+  <div class="venta-header">
+    <div>
+      <h3>Factura #<span th:text="${venta.codigoVenta}"></span></h3>
+      <p><i class="fas fa-calendar-alt"></i> Fecha: <span th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy')}"></span>
+    </div>
+    <div>
+      <span th:if="${venta.estado == 1}" class="badge-estado badge-activa"><i class="fas fa-check-circle"></i> ACTIVA</span>
+      <span th:if="${venta.estado == 0}" class="badge-estado badge-anulada"><i class="fas fa-ban"></i> ANULADA</span>
+    </div>
   </div>
 
-  <div class="pos-container">
-    <div class="pos-panel" style="flex: 1;">
+  <div class="pos-grid">
+    <!-- Panel izquierdo: Agregar producto -->
+    <div class="panel-agregar">
+      <h3><i class="fas fa-cart-plus"></i> Agregar producto</h3>
 
-      <div class="pos-header">
-        <label><b>Cliente de esta factura:</b></label>
-        <select class="form-crud" style="width:100%; padding:8px;" disabled>
-          <option th:each="cliente : ${clientes}"
-                  th:value="${cliente.dpiCliente}"
-                  th:text="${cliente.nombreCliente + ' ' + cliente.apellidoCliente}"
-                  th:selected="${venta.cliente != null and cliente.dpiCliente == venta.cliente.dpiCliente}">
-          </option>
-        </select>
+      <!-- Mensaje si está anulada -->
+      <div th:if="${venta.estado == 0}" class="mensaje-bloqueo">
+        <i class="fas fa-lock"></i> Esta factura está anulada. No se pueden agregar más productos.
       </div>
 
-      <div>
-        <label><b>Agregar Producto:</b></label>
+      <form th:if="${venta.estado == 1}" th:action="@{/detalles}" th:object="${nuevoDetalle}" method="post">
+        <input type="hidden" name="venta.codigoVenta" th:value="${venta.codigoVenta}">
 
-        <form th:if="${venta.estado == 1}" th:action="@{/detalles}" th:object="${nuevoDetalle}" method="post">
-          <input type="hidden" name="venta.codigoVenta" th:value="${venta.codigoVenta}">
-          <div class="input-inline">
-            <div style="flex: 2;">
-              <select th:field="*{producto.codigoProducto}" class="form-crud" style="width:100%; padding:8px;" required>
-                <option value="">-- Elija un Producto --</option>
-                <option th:each="producto : ${productos}"
-                        th:value="${producto.codigoProducto}"
-                        th:text="${producto.nombreProducto + ' (Q ' + producto.precio + ')'}">
-                </option>
-              </select>
-            </div>
-            <div style="flex: 1;">
-              <input type="number" th:field="*{cantidad}" min="1" value="1" class="form-crud" style="width:100%; padding:8px;" placeholder="Cant." required>
-            </div>
-          </div>
-          <button type="submit" class="btn-agregar">+ Añadir a la Factura</button>
-        </form>
-
-        <div th:if="${venta.estado == 0}" style="text-align: center; color: #999; padding: 20px; border: 1px dashed #ccc; background-color: #f8f9fa; border-radius: 5px;">
-          Formulario bloqueado
+        <div class="form-group">
+          <label><i class="fas fa-box"></i> Producto</label>
+          <select th:field="*{producto.codigoProducto}" required>
+            <option value="">-- Seleccione un producto --</option>
+            <option th:each="producto : ${productos}"
+                    th:value="${producto.codigoProducto}"
+                    th:text="${producto.nombreProducto + ' - Q ' + producto.precio + ' (Stock: ' + producto.stock + ')'}">
+            </option>
+          </select>
         </div>
 
-      </div>
+        <div class="form-group">
+          <label><i class="fas fa-sort-numeric-up"></i> Cantidad</label>
+          <input type="number" th:field="*{cantidad}" min="1" value="1" required>
+        </div>
+
+        <button type="submit" class="btn-agregar">
+          <i class="fas fa-plus-circle"></i> Añadir a la factura
+        </button>
+      </form>
     </div>
 
-    <div class="pos-panel" style="flex: 2;">
-      <h3>Resumen de la Factura</h3>
-      <div style="margin-top: 20px; padding: 20px; background-color: #f8f9fa; border-radius: 8px; border: 1px dashed #ccc;">
-        <p style="text-align: center; color: #666;">Tus productos ahora se guardan directamente en la base de datos de MySQL</p>
+    <!-- Panel derecho: Resumen de la venta -->
+    <div class="panel-resumen">
+      <h3><i class="fas fa-receipt"></i> Resumen de factura</h3>
+
+      <div class="cliente-info">
+        <p><i class="fas fa-user"></i> <strong>Cliente:</strong>
+          <span th:text="${venta.cliente.nombreCliente + ' ' + venta.cliente.apellidoCliente}"></span>
+        </p>
+        <p><i class="fas fa-id-card"></i> <strong>DPI:</strong>
+          <span th:text="${venta.cliente.dpiCliente}"></span>
+        </p>
+        <p><i class="fas fa-user-tie"></i> <strong>Vendedor:</strong>
+          <span th:text="${venta.usuario.username}"></span>
+        </p>
       </div>
 
-      <div class="total-display">
-        Total Guardado: Q <span th:text="${venta.total}">0.00</span>
+      <div style="max-height: 300px; overflow-y: auto;">
+        <table class="tabla-detalle">
+          <thead>
+          <tr><th>Producto</th><th>Cant.</th><th>Precio</th><th>Subtotal</th></tr>
+          </thead>
+          <tbody>
+          <!-- Aquí normalmente se mostrarían los detalles. Como no tenemos la lista de detalles en el modelo,
+               se asume que el controlador debe pasar 'detalles' o se usa la relación. Por simplicidad,
+               mostramos un mensaje; pero en la implementación real se debe pasar la lista de detalles desde el controlador -->
+          <tr th:each="detalle : ${venta.detalles}" th:if="${venta.detalles != null and !venta.detalles.isEmpty()}">
+            <td th:text="${detalle.producto.nombreProducto}">Producto</td>
+            <td th:text="${detalle.cantidad}">1</td>
+            <td th:text="'Q ' + ${detalle.precioUnitario}">Q 10.00</td>
+            <td th:text="'Q ' + ${detalle.subtotal}">Q 10.00</td>
+          </tr>
+          <tr th:if="${venta.detalles == null or venta.detalles.isEmpty()}">
+            <td colspan="4" style="text-align: center; color: #7f8c8d;">No hay productos agregados aún.</td>
+          </tr>
+          </tbody>
+        </table>
       </div>
 
-      <div style="text-align: right; margin-top: 20px;">
-        <a th:href="@{/ventas}" class="btn-guardar" style="text-decoration: none; display: inline-block; font-size: 1.2em; padding: 10px 30px; background-color: #007bff; color: white; border-radius: 5px;">Volver al Historial</a>
+      <div class="total-final">
+        <div class="label">TOTAL</div>
+        <div class="amount">Q <span th:text="${#numbers.formatDecimal(venta.total, 1, 2)}">0.00</span></div>
+      </div>
+
+      <div class="acciones-venta">
+        <a th:href="@{/ventas}" class="btn-volver"><i class="fas fa-arrow-left"></i> Volver al historial</a>
       </div>
     </div>
   </div>
 </div>
+
 </body>
 </html>
