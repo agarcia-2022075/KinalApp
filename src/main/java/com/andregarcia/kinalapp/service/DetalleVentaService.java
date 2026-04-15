@@ -40,14 +40,32 @@ public class DetalleVentaService implements IDetalleVentaService {
         Venta ventaReal = ventaRepository.findById(detalleVenta.getVenta().getCodigoVenta())
                 .orElseThrow(() -> new RuntimeException("La venta no existe"));
 
-        // NUEVO: Bloqueo de seguridad contable. Si el estado es 0, explota y rechaza el guardado.
+        // Bloqueo de seguridad contable
         if (ventaReal.getEstado() == 0) {
             throw new RuntimeException("Seguridad: No se pueden agregar productos a una factura anulada.");
         }
 
         detalleVenta.setVenta(ventaReal);
+
+        // --- NUEVA LÓGICA DE INVENTARIO (STOCK) ---
+        // 1. Buscamos el producto real en la base de datos
+        Producto productoDb = productoRepository.findById(detalleVenta.getProducto().getCodigoProducto())
+                .orElseThrow(() -> new RuntimeException("El producto seleccionado no existe en el inventario."));
+
+        // 2. Validamos que haya suficiente cantidad en stock
+        if (productoDb.getStock() < detalleVenta.getCantidad()) {
+            throw new RuntimeException("Stock insuficiente. Solo quedan " + productoDb.getStock() + " unidades disponibles.");
+        }
+
+        // 3. Descontamos el stock y guardamos el cambio en el producto
+        productoDb.setStock(productoDb.getStock() - detalleVenta.getCantidad());
+        productoRepository.save(productoDb);
+        // ---------------------------------------------
+
+        // Calculamos los subtotales usando los precios reales
         calcularValores(detalleVenta);
 
+        // Actualizamos el gran total de la factura
         BigDecimal nuevoTotal = ventaReal.getTotal().add(detalleVenta.getSubtotal());
         ventaReal.setTotal(nuevoTotal);
         ventaRepository.save(ventaReal);
@@ -71,7 +89,6 @@ public class DetalleVentaService implements IDetalleVentaService {
         Venta ventaReal = ventaRepository.findById(detalleVenta.getVenta().getCodigoVenta())
                 .orElseThrow(() -> new RuntimeException("La venta no existe"));
 
-        // Bloqueo de seguridad contable para actualizaciones
         if (ventaReal.getEstado() == 0) {
             throw new RuntimeException("Seguridad: No se puede modificar una factura anulada.");
         }
