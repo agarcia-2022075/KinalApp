@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 @Table(name = "ventas")
@@ -13,10 +14,13 @@ public class Venta {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "codigo_venta")
     private Long codigoVenta;
+
     @Column(name = "fecha_venta")
     private LocalDate fechaVenta;
+
     @Column(name = "total")
     private BigDecimal total;
+
     @Column(name = "estado")
     private int estado;
 
@@ -25,11 +29,17 @@ public class Venta {
     @JoinColumn(name = "Clientes_dpi_cliente", referencedColumnName = "dpi_cliente")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Cliente cliente;
+
     // Relacion con usuario (Llave foránea)
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "Usuarios_codigo_usuario", referencedColumnName = "codigo_usuario")
     @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
     private Usuario usuario;
+
+    // NUEVO: Relación bidireccional para traer los productos de esta factura automáticamente
+    @OneToMany(mappedBy = "venta", fetch = FetchType.EAGER)
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler", "venta"})
+    private List<DetalleVenta> detalles;
 
     // constructor vacío
     public Venta() {
@@ -91,5 +101,14 @@ public class Venta {
 
     public void setUsuario(Usuario usuario) {
         this.usuario = usuario;
+    }
+
+    // NUEVOS GETTERS Y SETTERS para acceder a la lista desde Thymeleaf
+    public List<DetalleVenta> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetalleVenta> detalles) {
+        this.detalles = detalles;
     }
 }
