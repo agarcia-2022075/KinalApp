@@ -27,12 +27,14 @@ public class VentaController {
         this.usuarioService = usuarioService;
     }
 
+    // 1. Listar ventas (Historial)
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("ventas", ventaService.listarTodos());
         return "listar-ventas";
     }
 
+    // 2. Mostrar formulario inicial (Cabecera)
     @GetMapping("/nuevo")
     public String mostrarFormulario(Model model) {
         model.addAttribute("venta", new Venta());
@@ -41,12 +43,17 @@ public class VentaController {
         return "formulario-venta";
     }
 
+    // 3. Guardar cabecera y REDIRIGIR AL POS (Mejora UX)
     @PostMapping("/guardar")
     public String guardar(@ModelAttribute Venta venta) {
-        ventaService.guardar(venta);
-        return "redirect:/ventas";
+        // Capturamos el objeto ya guardado (que ahora sí tiene un ID generado por MySQL)
+        Venta ventaGuardada = ventaService.guardar(venta);
+
+        // Redirigimos directamente al detalle de esa nueva factura para que el cajero empiece a cobrar
+        return "redirect:/ventas/detalle/" + ventaGuardada.getCodigoVenta();
     }
 
+    // 4. Punto de Venta (Detalle interactivo)
     @GetMapping("/detalle/{id}")
     public String verDetalle(@PathVariable Long id, Model model) {
         ventaService.buscarPorId(id).ifPresent(v -> {
@@ -58,13 +65,12 @@ public class VentaController {
         return "punto-de-venta";
     }
 
-    // NUEVO MÉTODO: Anular factura cambiando su estado a 0
+    // 5. Anular factura (Seguridad fiscal)
     @GetMapping("/anular/{id}")
     public String anularVenta(@PathVariable Long id) {
         try {
             ventaService.buscarPorId(id).ifPresent(venta -> {
                 venta.setEstado(0); // 0 = ANULADA
-                // Usamos actualizar para que se guarde el cambio de estado respetando la fecha y total
                 ventaService.actualizar(id, venta);
             });
             return "redirect:/ventas";
