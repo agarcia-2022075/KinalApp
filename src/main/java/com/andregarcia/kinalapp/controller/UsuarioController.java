@@ -49,8 +49,14 @@ public class UsuarioController {
     @PostMapping
     public String guardarOActualizar(@ModelAttribute Usuario usuario) {
         try {
-            // Spring Boot usará 'codigoUsuario' para decidir si hace INSERT o UPDATE
-            usuarioService.guardar(usuario);
+            // Evaluamos si el usuario ya tiene un ID asignado y existe en la BD
+            if (usuario.getCodigoUsuario() != null && usuarioService.existeId(usuario.getCodigoUsuario())) {
+                // Si existe, usamos el método actualizar que respeta la desactivación
+                usuarioService.actualizar(usuario.getCodigoUsuario(), usuario);
+            } else {
+                // Si es nuevo, usamos guardar que lo fuerza a estar activo por defecto
+                usuarioService.guardar(usuario);
+            }
             return "redirect:/usuarios";
         } catch (Exception e) {
             return "redirect:/usuarios?error=true";
