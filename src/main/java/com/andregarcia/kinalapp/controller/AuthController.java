@@ -62,6 +62,45 @@ public class AuthController {
         }
     }
 
+    // GET: Muestra el formulario de registro de nuevo usuario
+    @GetMapping("/registro")
+    public String mostrarRegistro(Model model) {
+        model.addAttribute("usuario", new Usuario());
+        return "registro";
+    }
+
+    // POST: Procesa el registro de un nuevo usuario
+    @PostMapping("/registro")
+    public String procesarRegistro(@RequestParam String username,
+                                   @RequestParam String password,
+                                   @RequestParam String email,
+                                   @RequestParam String rol,
+                                   Model model) {
+        try {
+            // Verificar si el nombre de usuario ya existe
+            List<Usuario> todos = usuarioService.listarTodos();
+            boolean existe = todos.stream().anyMatch(u -> u.getUsername().equals(username));
+            if (existe) {
+                model.addAttribute("error", "El nombre de usuario ya está en uso. Elige otro.");
+                return "registro";
+            }
+
+            // Crear nuevo usuario
+            Usuario nuevoUsuario = new Usuario();
+            nuevoUsuario.setUsername(username);
+            nuevoUsuario.setPassword(password); // En un proyecto real, aquí se encriptaría la contraseña
+            nuevoUsuario.setEmail(email);
+            nuevoUsuario.setRol(rol);
+            nuevoUsuario.setEstado(1); // Activo por defecto para que pueda iniciar sesión inmediatamente
+
+            usuarioService.guardar(nuevoUsuario);
+            return "redirect:/login?registrado=true";
+        } catch (Exception e) {
+            model.addAttribute("error", "Error al registrar: " + e.getMessage());
+            return "registro";
+        }
+    }
+
     // GET: Para cerrar sesión
     @GetMapping("/logout")
     public String cerrarSesion(HttpSession session) {

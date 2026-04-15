@@ -19,6 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**") // Proteger TODAS las rutas del sistema
                 .excludePathPatterns(
                         "/login",      // Permitir entrar a la vista de login
+                        "/registro",
                         "/login.css**",     // Permitir cargar los estilos
                         "/js/**",      // Permitir cargar scripts
                         "/img/**"      // Permitir cargar imágenes

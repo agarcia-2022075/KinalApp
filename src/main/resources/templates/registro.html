@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>KinalApp · Registro de Usuario</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background-color: #F4F1EA;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1.5rem;
+    }
+
+    .register-card {
+        max-width: 520px;
+        width: 100%;
+        background: #FFFFFF;
+        border-radius: 2rem;
+        box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.05);
+        overflow: hidden;
+    }
+
+    .card-header {
+        background-color: #2C3E50;
+        padding: 2rem 1.5rem;
+        text-align: center;
+    }
+
+    .logo-container {
+        margin-bottom: 1rem;
+    }
+    .logo-img {
+        max-width: 80px;
+        height: auto;
+    }
+    .logo-placeholder {
+        font-size: 3.5rem;
+        color: rgba(255,255,255,0.9);
+    }
+
+    .card-header h1 {
+        color: white;
+        font-weight: 700;
+        font-size: 1.8rem;
+        letter-spacing: -0.5px;
+        margin-bottom: 0.25rem;
+    }
+
+    .card-header p {
+        color: rgba(255, 255, 255, 0.8);
+        font-size: 0.9rem;
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    label {
+        display: block;
+        font-weight: 600;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        color: #2C3E50;
+        margin-bottom: 0.5rem;
+    }
+
+    .input-icon {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+    .input-icon i {
+        position: absolute;
+        left: 1rem;
+        color: #95A5A6;
+        font-size: 1.1rem;
+    }
+    input, select {
+        width: 100%;
+        padding: 0.9rem 1rem 0.9rem 2.8rem;
+        font-size: 1rem;
+        font-family: inherit;
+        background-color: #FEFCF8;
+        border: 1.5px solid #E0DCD3;
+        border-radius: 1.2rem;
+        transition: all 0.2s ease;
+        outline: none;
+        font-weight: 500;
+    }
+    select {
+        padding-left: 2.8rem;
+        appearance: none;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%232C3E50' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+    }
+    input:focus, select:focus {
+        border-color: #E67E22;
+        box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.2);
+        background-color: white;
+    }
+
+    .btn-registrar {
+        width: 100%;
+        background-color: #E67E22;
+        color: white;
+        border: none;
+        padding: 0.9rem;
+        font-size: 1rem;
+        font-weight: 700;
+        border-radius: 2rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+    }
+    .btn-registrar:hover {
+        background-color: #D35400;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(230, 126, 34, 0.3);
+    }
+
+    .btn-login-link {
+        width: 100%;
+        background-color: transparent;
+        color: #2C3E50;
+        border: 1.5px solid #2C3E50;
+        padding: 0.8rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        border-radius: 2rem;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        margin-top: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.6rem;
+        text-decoration: none;
+    }
+    .btn-login-link:hover {
+        background-color: #2C3E50;
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .alert {
+        padding: 0.9rem 1rem;
+        border-radius: 1.2rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+    .alert-error {
+        background-color: #FADBD8;
+        color: #C0392B;
+        border-left: 5px solid #E67E22;
+    }
+
+    .card-footer {
+        text-align: center;
+        padding: 1rem 2rem 1.5rem;
+        font-size: 0.75rem;
+        color: #95A5A6;
+        border-top: 1px solid #EDE9E0;
+    }
+
+    @media (max-width: 480px) {
+        .card-body {
+            padding: 1.5rem;
+        }
+        .card-header {
+            padding: 1.5rem;
+        }
+        .card-header h1 {
+            font-size: 1.5rem;
+        }
+    }
+  </style>
+</head>
+<body>
+<div class="register-card">
+  <div class="card-header">
+    <div class="logo-container">
+      <img class="logo-img" th:src="@{/img/logo.png}" alt="Logo KinalApp" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-store logo-placeholder\'></i>';">
+    </div>
+    <h1>Crear cuenta</h1>
+    <p>Regístrate para acceder al sistema</p>
+  </div>
+
+  <div class="card-body">
+    <!-- Mensaje de error -->
+    <div th:if="${error}" class="alert alert-error">
+      <i class="fas fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+    </div>
+
+    <form th:action="@{/registro}" method="post">
+      <div class="form-group">
+        <label><i class="fas fa-user"></i> Nombre de usuario</label>
+        <div class="input-icon">
+          <i class="fas fa-user"></i>
+          <input type="text" name="username" required placeholder="Ej: juanperez" autocomplete="username">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label><i class="fas fa-envelope"></i> Correo electrónico</label>
+        <div class="input-icon">
+          <i class="fas fa-envelope"></i>
+          <input type="email" name="email" required placeholder="ejemplo@kinal.edu.gt" autocomplete="email">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Contraseña</label>
+        <div class="input-icon">
+          <i class="fas fa-key"></i>
+          <input type="password" name="password" required placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label><i class="fas fa-tag"></i> Rol</label>
+        <div class="input-icon">
+          <i class="fas fa-user-tag"></i>
+          <select name="rol" required>
+            <option value="CAJERO">Cajero</option>
+            <option value="ADMINISTRADOR">Administrador</option>
+          </select>
+        </div>
+        <small style="color: #7f8c8d; font-size: 0.7rem;">Selecciona el nivel de acceso</small>
+      </div>
+
+      <button type="submit" class="btn-registrar">
+        <i class="fas fa-user-plus"></i> Registrarse
+      </button>
+    </form>
+
+    <a th:href="@{/login}" class="btn-login-link">
+      <i class="fas fa-arrow-left"></i> Volver al inicio de sesión
+    </a>
+  </div>
+
+  <div class="card-footer">
+    <span><i class="far fa-copyright"></i> 2025 KinalApp · Todos los derechos reservados</span>
+  </div>
+</div>
+</body>
+</html>
