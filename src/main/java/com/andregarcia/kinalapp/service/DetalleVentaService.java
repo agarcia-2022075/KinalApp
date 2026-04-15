@@ -19,7 +19,7 @@ public class DetalleVentaService implements IDetalleVentaService {
 
     private final DetalleVentaRepository detalleVentaRepository;
     private final ProductoRepository productoRepository;
-    private final VentaRepository ventaRepository; // Inyectamos el repositorio de ventas
+    private final VentaRepository ventaRepository;
 
     public DetalleVentaService(DetalleVentaRepository detalleVentaRepository, ProductoRepository productoRepository, VentaRepository ventaRepository) {
         this.detalleVentaRepository = detalleVentaRepository;
@@ -37,16 +37,17 @@ public class DetalleVentaService implements IDetalleVentaService {
     public DetalleVenta guardar(DetalleVenta detalleVenta) {
         validarRelaciones(detalleVenta);
 
-        // 1. Recuperamos la venta real para evitar el error de llave foránea en SQL
         Venta ventaReal = ventaRepository.findById(detalleVenta.getVenta().getCodigoVenta())
                 .orElseThrow(() -> new RuntimeException("La venta no existe"));
 
-        detalleVenta.setVenta(ventaReal);
+        // NUEVO: Bloqueo de seguridad contable. Si el estado es 0, explota y rechaza el guardado.
+        if (ventaReal.getEstado() == 0) {
+            throw new RuntimeException("Seguridad: No se pueden agregar productos a una factura anulada.");
+        }
 
-        // 2. Calculamos los valores del producto
+        detalleVenta.setVenta(ventaReal);
         calcularValores(detalleVenta);
 
-        // 3. Sumamos el dinero al total de la factura principal y actualizamos
         BigDecimal nuevoTotal = ventaReal.getTotal().add(detalleVenta.getSubtotal());
         ventaReal.setTotal(nuevoTotal);
         ventaRepository.save(ventaReal);
@@ -69,8 +70,13 @@ public class DetalleVentaService implements IDetalleVentaService {
 
         Venta ventaReal = ventaRepository.findById(detalleVenta.getVenta().getCodigoVenta())
                 .orElseThrow(() -> new RuntimeException("La venta no existe"));
-        detalleVenta.setVenta(ventaReal);
 
+        // Bloqueo de seguridad contable para actualizaciones
+        if (ventaReal.getEstado() == 0) {
+            throw new RuntimeException("Seguridad: No se puede modificar una factura anulada.");
+        }
+
+        detalleVenta.setVenta(ventaReal);
         calcularValores(detalleVenta);
         return detalleVentaRepository.save(detalleVenta);
     }
