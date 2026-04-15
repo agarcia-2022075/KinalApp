@@ -24,6 +24,10 @@
 <div class="container">
     <h2 th:text="${producto.codigoProducto == null} ? 'Registrar Nuevo Producto' : 'Editar Producto'">Formulario</h2>
 
+    <div th:if="${error}" th:text="${error}" style="color: #721c24; background-color: #f8d7da; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #f5c6cb;">
+        Mensaje de error genérico
+    </div>
+
     <form th:action="@{/productos}" th:object="${producto}" method="post" class="form-crud">
 
         <input type="hidden" th:field="*{codigoProducto}" />
@@ -35,12 +39,12 @@
 
         <div class="form-group">
             <label>Precio (Q):</label>
-            <input type="number" step="0.01" th:field="*{precio}" required placeholder="Ej: 4500.50" />
+            <input type="number" step="0.01" min="0" th:field="*{precio}" required placeholder="Ej: 4500.50" />
         </div>
 
         <div class="form-group">
             <label>Stock / Existencias:</label>
-            <input type="number" th:field="*{stock}" required placeholder="Cantidad en bodega" />
+            <input type="number" min="0" th:field="*{stock}" required placeholder="Cantidad en bodega" />
         </div>
 
         <div class="form-group">

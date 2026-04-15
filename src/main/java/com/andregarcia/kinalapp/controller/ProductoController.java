@@ -46,21 +46,20 @@ public class ProductoController {
         return "formulario-producto";
     }
 
-    // 5. Guardar o Actualizar
+    // 5. Guardar o Actualizar (ProductoController.java)
     @PostMapping
-    public String guardarOActualizar(@ModelAttribute Producto producto) {
+    public String guardarOActualizar(@ModelAttribute Producto producto, Model model) {
         try {
-            // Evaluamos si el producto ya existe en la base de datos
             if (producto.getCodigoProducto() != null && productoService.existeId(producto.getCodigoProducto())) {
-                // Si existe, usamos actualizar para respetar la desactivación (estado 0)
                 productoService.actualizar(producto.getCodigoProducto(), producto);
             } else {
-                // Si es nuevo, usamos guardar para que se active por defecto
                 productoService.guardar(producto);
             }
-            return "redirect:/productos";
+            return "redirect:/productos"; // Si todo sale bien, lo mandamos a la lista
         } catch (Exception e) {
-            return "redirect:/productos?error=true";
+            // Si hay error, capturamos tu mensaje de validación y nos quedamos en el formulario
+            model.addAttribute("error", e.getMessage());
+            return "formulario-producto";
         }
     }
 
