@@ -30,7 +30,6 @@ public class VentaController {
     @GetMapping
     public String listar(Model model) {
         model.addAttribute("ventas", ventaService.listarTodos());
-        // CORRECCIÓN: Nombre exacto según tu captura de pantalla
         return "listar-ventas";
     }
 
@@ -54,9 +53,23 @@ public class VentaController {
             model.addAttribute("venta", v);
             model.addAttribute("nuevoDetalle", new DetalleVenta());
             model.addAttribute("productos", productoService.listarActivos());
-            // CORRECCIÓN CRÍTICA: Aquí faltaba cargar los clientes para el punto-de-venta.html
             model.addAttribute("clientes", clienteService.listarTodos());
         });
         return "punto-de-venta";
+    }
+
+    // NUEVO MÉTODO: Anular factura cambiando su estado a 0
+    @GetMapping("/anular/{id}")
+    public String anularVenta(@PathVariable Long id) {
+        try {
+            ventaService.buscarPorId(id).ifPresent(venta -> {
+                venta.setEstado(0); // 0 = ANULADA
+                // Usamos actualizar para que se guarde el cambio de estado respetando la fecha y total
+                ventaService.actualizar(id, venta);
+            });
+            return "redirect:/ventas";
+        } catch (Exception e) {
+            return "redirect:/ventas?error=true";
+        }
     }
 }
