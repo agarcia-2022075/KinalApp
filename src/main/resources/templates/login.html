@@ -151,6 +151,33 @@
             transform: translateY(1px);
         }
 
+        /* Botón registro (secundario) */
+        .btn-registro {
+            width: 100%;
+            background-color: transparent;
+            color: #2C3E50;
+            border: 1.5px solid #2C3E50;
+            padding: 0.8rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1rem;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            text-decoration: none;
+        }
+        .btn-registro:hover {
+            background-color: #2C3E50;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.2);
+        }
+
         /* Alertas */
         .alert {
             padding: 0.9rem 1rem;
@@ -221,6 +248,11 @@
             <i class="fas fa-check-circle"></i> Sesión cerrada correctamente
         </div>
 
+        <!-- Mensaje de registro exitoso -->
+        <div th:if="${param.registrado}" class="alert alert-success">
+            <i class="fas fa-user-check"></i> ¡Registro exitoso! Ahora puedes iniciar sesión.
+        </div>
+
         <form th:action="@{/login}" method="post">
             <div class="form-group">
                 <label for="username"><i class="fas fa-user me-1"></i> Usuario</label>
@@ -244,6 +276,11 @@
                 <span>Ingresar al sistema</span> <i class="fas fa-arrow-right"></i>
             </button>
         </form>
+
+        <!-- Botón para ir al registro -->
+        <a th:href="@{/registro}" class="btn-registro">
+            <i class="fas fa-user-plus"></i> ¿No tienes cuenta? Regístrate
+        </a>
     </div>
 
     <div class="card-footer">
