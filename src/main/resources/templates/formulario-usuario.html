@@ -24,6 +24,10 @@
 <div class="container">
     <h2 th:text="${usuario.codigoUsuario == null} ? 'Registrar Nuevo Usuario' : 'Editar Usuario'">Formulario</h2>
 
+    <div th:if="${param.error}" style="color: red; background-color: #f8d7da; padding: 10px; border-radius: 5px; margin-bottom: 15px; border: 1px solid #f5c6cb;">
+        Ocurrió un error al guardar. Verifica que todos los campos (incluyendo el correo) sean válidos.
+    </div>
+
     <form th:action="@{/usuarios}" th:object="${usuario}" method="post" class="form-crud">
 
         <input type="hidden" th:field="*{codigoUsuario}" />
@@ -31,6 +35,11 @@
         <div class="form-group">
             <label>Nombre de Usuario (Login):</label>
             <input type="text" th:field="*{username}" required placeholder="Ej: admin01" />
+        </div>
+
+        <div class="form-group">
+            <label>Correo Electrónico:</label>
+            <input type="email" th:field="*{email}" required placeholder="Ej: usuario@kinal.edu.gt" />
         </div>
 
         <div class="form-group">
