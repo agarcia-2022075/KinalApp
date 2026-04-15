@@ -44,12 +44,10 @@ public class ClienteController {
         return "formulario-cliente";
     }
 
-    // 5. Guardar (sirve tanto para crear como para editar)
+    // 5. Guardar (sirve tanto para crear como para editar en ClienteController.java)
     @PostMapping
-    public String guardarOActualizar(@ModelAttribute Cliente cliente) {
+    public String guardarOActualizar(@ModelAttribute Cliente cliente, Model model) {
         try {
-            // Si el cliente ya existe en la BD (lo sabemos por su DPI), el servicio lo actualizará.
-            // Si no existe, el servicio creará uno nuevo.
             if(clienteService.existeDPI(cliente.getDpiCliente())){
                 clienteService.actualizar(cliente.getDpiCliente(), cliente);
             } else {
@@ -57,7 +55,9 @@ public class ClienteController {
             }
             return "redirect:/clientes";
         } catch (Exception e) {
-            return "redirect:/clientes?error=true";
+            // Si falla la validación, mostramos el error y no perdemos los datos
+            model.addAttribute("error", e.getMessage());
+            return "formulario-cliente";
         }
     }
 
