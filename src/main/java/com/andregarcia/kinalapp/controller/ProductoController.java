@@ -46,12 +46,18 @@ public class ProductoController {
         return "formulario-producto";
     }
 
-    /// 5. Guardar o Actualizar
+    // 5. Guardar o Actualizar
     @PostMapping
     public String guardarOActualizar(@ModelAttribute Producto producto) {
         try {
-            // JPA es inteligente: Si codigoProducto es 0 o nulo hace INSERT, si ya existe hace UPDATE
-            productoService.guardar(producto);
+            // Evaluamos si el producto ya existe en la base de datos
+            if (producto.getCodigoProducto() != null && productoService.existeId(producto.getCodigoProducto())) {
+                // Si existe, usamos actualizar para respetar la desactivación (estado 0)
+                productoService.actualizar(producto.getCodigoProducto(), producto);
+            } else {
+                // Si es nuevo, usamos guardar para que se active por defecto
+                productoService.guardar(producto);
+            }
             return "redirect:/productos";
         } catch (Exception e) {
             return "redirect:/productos?error=true";
