@@ -88,11 +88,11 @@ public class ClienteService implements IClienteService {
 
     @Override
     public void eliminar(String dpi) {
-        //Eliminar un cliente
-        if (!clienteRepository.existsById(dpi)){
-            throw new RuntimeException("el cliente no se encontro con el DPI" + dpi);
-        }
-        clienteRepository.deleteById(dpi);
+        // Desactivación lógica en lugar de eliminación física
+        Cliente cliente = clienteRepository.findById(dpi)
+                .orElseThrow(() -> new RuntimeException("El cliente no se encontró con el DPI: " + dpi));
+        cliente.setEstado(0); // 0 = Inactivo
+        clienteRepository.save(cliente);
     }
 
     @Override
