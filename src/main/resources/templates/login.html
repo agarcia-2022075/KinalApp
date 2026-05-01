@@ -239,8 +239,8 @@
 
     <div class="card-body">
         <!-- Mensaje de error -->
-        <div th:if="${error}" class="alert alert-error">
-            <i class="fas fa-exclamation-triangle"></i> <span th:text="${error}"></span>
+        <div th:if="${param.error}" class="alert alert-error">
+            <i class="fas fa-exclamation-triangle"></i> <span>Usuario o contraseña incorrectos</span>
         </div>
 
         <!-- Mensaje de logout -->

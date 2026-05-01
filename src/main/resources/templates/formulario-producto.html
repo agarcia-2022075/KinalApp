@@ -280,13 +280,14 @@
 <body>
 
 <nav class="navbar">
-    <div class="logo-area">
+    <a th:href="@{/dashboard}" class="logo-area">
         <div class="logo-img">
-            <img th:src="@{/images/logo.png}" alt="KinalApp Logo" style="height: 40px; width: auto;">
+            <img th:src="@{/images/logo.png}" alt="K" style="height: 30px;">
         </div>
         <div class="logo-text">KinalApp</div>
-    </div>
+    </a>
     <ul class="nav-links">
+        <li><a th:href="@{/dashboard}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
         <li><a th:href="@{/clientes}"><i class="fas fa-users"></i> Clientes</a></li>
         <li><a th:href="@{/productos}"><i class="fas fa-boxes"></i> Productos</a></li>
         <li><a th:href="@{/usuarios}"><i class="fas fa-user-cog"></i> Usuarios</a></li>
