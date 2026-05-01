@@ -58,10 +58,11 @@ public class ProductoService implements IProductoService {
 
     @Override
     public void eliminar(Long id) {
-        if (!productoRepository.existsById(id)) {
-            throw new RuntimeException("El producto no se encontro con el codigo: " + id);
-        }
-        productoRepository.deleteById(id);
+        // Desactivación lógica en lugar de eliminación física
+        Producto producto = productoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("El producto no se encontró con el código: " + id));
+        producto.setEstado(0); // 0 = Inactivo
+        productoRepository.save(producto);
     }
 
     @Override
