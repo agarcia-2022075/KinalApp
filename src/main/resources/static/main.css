@@ -1,0 +1,177 @@
+/* Ubicación: C:\Spring_2022075\kinalapp\src\main\resources\static\main.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background-color: #f4f4f9;
+}
+
+/* --- ESTILOS DE LA BARRA DE NAVEGACIÓN --- */
+.navbar {
+    background-color: #0056b3;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.navbar .logo {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.nav-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.nav-links a:hover {
+    background-color: #004494;
+}
+
+/* --- ESTILOS DEL USUARIO Y LOGOUT --- */
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.btn-logout {
+    background-color: #dc3545;
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.btn-logout:hover {
+    background-color: #c82333;
+}
+
+/* --- ESTILOS DEL CONTENIDO Y TABLAS --- */
+.container {
+    padding: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+th {
+    background-color: #0056b3;
+    color: white;
+}
+
+tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Ubicación: C:\Spring_2022075\kinalapp\src\main\resources\static\main.css */
+/* --- ESTILOS DE BOTONES CRUD --- */
+.btn-nuevo {
+    display: inline-block;
+    background-color: #28a745;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+.btn-nuevo:hover { background-color: #218838; }
+
+.btn-editar {
+    background-color: #ffc107;
+    color: black;
+    padding: 6px 10px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+    margin-right: 5px;
+}
+.btn-editar:hover { background-color: #e0a800; }
+
+.btn-eliminar {
+    background-color: #dc3545;
+    color: white;
+    padding: 6px 10px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-size: 14px;
+}
+.btn-eliminar:hover { background-color: #c82333; }
+
+.form-crud {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    max-width: 600px;
+}
+/* AÑADIMOS EL SELECT AQUÍ PARA QUE TENGA EL MISMO DISEÑO QUE EL INPUT */
+.form-crud input, .form-crud select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+.btn-guardar {
+    background-color: #0056b3;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+.btn-cancelar {
+    background-color: #6c757d;
+    color: white;
+    padding: 9px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    font-weight: bold;
+    margin-left: 10px;
+}
+
+/* Estilos para el panel superior de la tabla */
+.toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+.buscador-input {
+    padding: 10px;
+    width: 250px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}

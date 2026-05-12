@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>KinalApp · Cliente</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F4F6F9; /* 60% base */
+            color: #1e2a3a;
+            line-height: 1.5;
+        }
+
+        /* ========== NAVBAR (30% #2C3E50) ========== */
+        .navbar {
+            background-color: #2C3E50;
+            padding: 0.9rem 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-img {
+            height: 40px;
+            width: auto;
+            background-color: #E67E22;
+            border-radius: 8px;
+            padding: 4px 8px;
+            color: white;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-img i {
+            font-size: 1.6rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.3px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .nav-links a:hover {
+            color: #E67E22;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background-color: rgba(255,255,255,0.1);
+            padding: 0.4rem 1rem;
+            border-radius: 40px;
+        }
+
+        .user-info span {
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        .btn-logout {
+            background-color: #E67E22;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.8rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-logout:hover {
+            background-color: #d35400;
+            transform: translateY(-1px);
+        }
+
+        /* ========== CONTENEDOR PRINCIPAL ========== */
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+        }
+
+        /* Tarjeta blanca */
+        .card {
+            background: white;
+            border-radius: 1.5rem;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.05), 0 4px 8px rgba(0,0,0,0.02);
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .card-header {
+            background-color: #2C3E50;
+            padding: 1.2rem 2rem;
+            border-bottom: 3px solid #E67E22;
+        }
+
+        .card-header h2 {
+            color: white;
+            font-weight: 600;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .card-header h2 i {
+            color: #E67E22;
+            font-size: 1.6rem;
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* Formulario elegante */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+            color: #2C3E50;
+            letter-spacing: -0.2px;
+        }
+
+        label i {
+            color: #E67E22;
+            width: 20px;
+            margin-right: 6px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 1rem;
+            background-color: #fefefe;
+            transition: all 0.2s;
+            outline: none;
+        }
+
+        input:focus, select:focus {
+            border-color: #E67E22;
+            box-shadow: 0 0 0 3px rgba(230,126,34,0.1);
+        }
+
+        input[readonly] {
+            background-color: #f8fafc;
+            cursor: not-allowed;
+            color: #5a6e7a;
+        }
+
+        .error-message {
+            background-color: #fee2e2;
+            color: #c0392b;
+            padding: 0.8rem 1rem;
+            border-radius: 1rem;
+            font-size: 0.85rem;
+            margin-bottom: 1.5rem;
+            border-left: 4px solid #e74c3c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .error-message i {
+            font-size: 1.1rem;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-guardar {
+            background-color: #E67E22;
+            color: white;
+            border: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-guardar:hover {
+            background-color: #d35400;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(230,126,34,0.3);
+        }
+
+        .btn-cancelar {
+            background-color: #ecf0f1;
+            color: #2C3E50;
+            text-decoration: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-cancelar:hover {
+            background-color: #d5dbdf;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 640px) {
+            .navbar {
+                flex-direction: column;
+                gap: 12px;
+                padding: 1rem;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 1rem;
+            }
+            .card-body {
+                padding: 1.5rem;
+            }
+            .form-actions {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <a th:href="@{/dashboard}" class="logo-area">
+        <div class="logo-img">
+            <img th:src="@{/images/logo.png}" alt="K" style="height: 30px;">
+        </div>
+        <div class="logo-text">KinalApp</div>
+    </a>
+    <ul class="nav-links">
+        <li><a th:href="@{/dashboard}"><i class="fas fa-chart-line"></i> Dashboard</a></li>
+        <li><a th:href="@{/clientes}"><i class="fas fa-users"></i> Clientes</a></li>
+        <li><a th:href="@{/productos}"><i class="fas fa-boxes"></i> Productos</a></li>
+        <li><a th:href="@{/usuarios}"><i class="fas fa-user-cog"></i> Usuarios</a></li>
+        <li><a th:href="@{/ventas}"><i class="fas fa-shopping-cart"></i> Ventas</a></li>
+    </ul>
+    <div class="user-info">
+        <span><i class="fas fa-user-circle"></i> <b th:text="${session.usuarioLogueado}">Usuario</b></span>
+        <a th:href="@{/logout}" class="btn-logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>
+                <i class="fas fa-user-plus"></i>
+                <span th:text="${cliente.dpiCliente == null or cliente.dpiCliente.isEmpty()} ? 'Registrar Nuevo Cliente' : 'Editar Cliente'">Formulario</span>
+            </h2>
+        </div>
+        <div class="card-body">
+            <!-- Mostrar error si existe -->
+            <div th:if="${error}" class="error-message">
+                <i class="fas fa-exclamation-triangle"></i>
+                <span th:text="${error}"></span>
+            </div>
+
+            <form th:action="@{/clientes}" th:object="${cliente}" method="post">
+                <div class="form-group">
+                    <label><i class="fas fa-id-card"></i> DPI del Cliente</label>
+                    <input type="text" th:field="*{dpiCliente}" required
+                           th:readonly="${cliente.dpiCliente != null and !cliente.dpiCliente.isEmpty()}"
+                           placeholder="Ej: 1234567890101" />
+                    <small style="color: #7f8c8d; font-size: 0.7rem;">Número único de identificación (solo lectura en edición)</small>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Nombre</label>
+                    <input type="text" th:field="*{nombreCliente}" required placeholder="Nombre completo" />
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-user"></i> Apellido</label>
+                    <input type="text" th:field="*{apellidoCliente}" required placeholder="Apellido" />
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-map-marker-alt"></i> Dirección</label>
+                    <input type="text" th:field="*{direccion}" required placeholder="Calle, zona, ciudad" />
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-toggle-on"></i> Estado del Cliente</label>
+                    <select th:field="*{estado}" required>
+                        <option value="1">Activo</option>
+                        <option value="0">Inactivo</option>
+                    </select>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-guardar"><i class="fas fa-save"></i> Guardar Cliente</button>
+                    <a th:href="@{/clientes}" class="btn-cancelar"><i class="fas fa-times"></i> Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

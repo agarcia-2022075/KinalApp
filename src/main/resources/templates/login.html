@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>KinalApp · Iniciar Sesión</title>
+    <!-- Google Fonts para tipografía moderna -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <!-- Font Awesome 6 (gratuito) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            /* 60% - fondo neutro cálido */
+            background-color: #F4F1EA;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        /* Tarjeta principal */
+        .login-card {
+            max-width: 480px;
+            width: 100%;
+            background: #FFFFFF;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.2), 0 1px 3px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+            transition: transform 0.2s ease;
+        }
+
+        /* 30% - color secundario (verde oscuro/azul grisáceo elegante) */
+        .card-header {
+            background-color: #2C3E50;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            position: relative;
+        }
+
+        /* Contenedor del logo */
+        .logo-container {
+            margin-bottom: 1rem;
+        }
+        .logo-img {
+            max-width: 80px;
+            height: auto;
+            border-radius: 20px;
+            /* Si no hay imagen, se puede poner un ícono */
+        }
+        .logo-placeholder {
+            font-size: 3.5rem;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .card-header h1 {
+            color: white;
+            font-weight: 700;
+            font-size: 2rem;
+            letter-spacing: -0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .card-header p {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 400;
+        }
+
+        /* Cuerpo del formulario */
+        .card-body {
+            padding: 2rem 2rem 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #2C3E50;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-icon i {
+            position: absolute;
+            left: 1rem;
+            color: #95A5A6;
+            font-size: 1.1rem;
+        }
+        input {
+            width: 100%;
+            padding: 0.9rem 1rem 0.9rem 2.8rem;
+            font-size: 1rem;
+            font-family: inherit;
+            background-color: #FEFCF8;
+            border: 1.5px solid #E0DCD3;
+            border-radius: 1.2rem;
+            transition: all 0.2s ease;
+            outline: none;
+            font-weight: 500;
+        }
+        input:focus {
+            border-color: #E67E22; /* 10% acento */
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.2);
+            background-color: white;
+        }
+
+        /* Botón acento (10%) */
+        .btn-login {
+            width: 100%;
+            background-color: #E67E22;
+            color: white;
+            border: none;
+            padding: 0.9rem;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 0.5rem;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            letter-spacing: 0.3px;
+        }
+        .btn-login:hover {
+            background-color: #D35400;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(230, 126, 34, 0.3);
+        }
+        .btn-login:active {
+            transform: translateY(1px);
+        }
+
+        /* Botón registro (secundario) */
+        .btn-registro {
+            width: 100%;
+            background-color: transparent;
+            color: #2C3E50;
+            border: 1.5px solid #2C3E50;
+            padding: 0.8rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 2rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-top: 1rem;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.6rem;
+            text-decoration: none;
+        }
+        .btn-registro:hover {
+            background-color: #2C3E50;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(44, 62, 80, 0.2);
+        }
+
+        /* Alertas */
+        .alert {
+            padding: 0.9rem 1rem;
+            border-radius: 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .alert-error {
+            background-color: #FADBD8;
+            color: #C0392B;
+            border-left: 5px solid #E67E22;
+        }
+        .alert-success {
+            background-color: #D5F5E3;
+            color: #1E8449;
+            border-left: 5px solid #2C3E50;
+        }
+
+        /* Pie de página */
+        .card-footer {
+            text-align: center;
+            padding: 1.2rem 2rem 1.8rem;
+            font-size: 0.75rem;
+            color: #95A5A6;
+            border-top: 1px solid #EDE9E0;
+            background-color: #FFFFFF;
+        }
+
+        @media (max-width: 480px) {
+            .card-body {
+                padding: 1.5rem;
+            }
+            .card-header {
+                padding: 1.5rem;
+            }
+            .card-header h1 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="login-card">
+    <div class="card-header">
+        <div class="logo-container">
+            <!-- Aquí puedes colocar tu logo: reemplaza el src con tu imagen -->
+            <img class="logo-img" th:src="@{/img/logo.png}" alt="Logo KinalApp" onerror="this.onerror=null; this.parentElement.innerHTML='<i class=\'fas fa-store logo-placeholder\'></i>';">
+            <!-- Si no hay imagen, mostrará un ícono por defecto gracias al onerror -->
+        </div>
+        <h1>KinalApp</h1>
+        <p>Punto de venta inteligente</p>
+    </div>
+
+    <div class="card-body">
+        <!-- Mensaje de error -->
+        <div th:if="${param.error}" class="alert alert-error">
+            <i class="fas fa-exclamation-triangle"></i> <span>Usuario o contraseña incorrectos</span>
+        </div>
+
+        <!-- Mensaje de logout -->
+        <div th:if="${param.logout}" class="alert alert-success">
+            <i class="fas fa-check-circle"></i> Sesión cerrada correctamente
+        </div>
+
+        <!-- Mensaje de registro exitoso -->
+        <div th:if="${param.registrado}" class="alert alert-success">
+            <i class="fas fa-user-check"></i> ¡Registro exitoso! Ahora puedes iniciar sesión.
+        </div>
+
+        <form th:action="@{/login}" method="post">
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user me-1"></i> Usuario</label>
+                <div class="input-icon">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="username" name="username" required
+                           placeholder="Ej: admin, cajero01" autocomplete="username">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock me-1"></i> Contraseña</label>
+                <div class="input-icon">
+                    <i class="fas fa-key"></i>
+                    <input type="password" id="password" name="password" required
+                           placeholder="••••••••" autocomplete="current-password">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-login">
+                <span>Ingresar al sistema</span> <i class="fas fa-arrow-right"></i>
+            </button>
+        </form>
+
+        <!-- Botón para ir al registro -->
+        <a th:href="@{/registro}" class="btn-registro">
+            <i class="fas fa-user-plus"></i> ¿No tienes cuenta? Regístrate
+        </a>
+    </div>
+
+    <div class="card-footer">
+        <span><i class="far fa-copyright"></i> 2025 KinalApp · Gestión comercial</span>
+    </div>
+</div>
+</body>
+</html>
