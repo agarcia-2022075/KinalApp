@@ -351,7 +351,7 @@
                 <tr th:each="venta : ${ventas}">
                     <td th:text="${venta.codigoVenta}">1</td>
                     <td th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy')}">15/04/2025</td>
-                    <td th:text="${venta.cliente.nombreCliente + ' ' + venta.cliente.apellidoCliente}">María González</td>
+                    <td th:text="${venta.cliente != null ? (venta.cliente.nombreCliente + ' ' + venta.cliente.apellidoCliente) : 'Cliente No Asignado'}">María González</td>
                     <td th:text="${venta.usuario.username}">admin01</td>
                     <td class="total" th:text="'Q ' + ${#numbers.formatDecimal(venta.total, 1, 2)}">Q 1500.00</td>
                     <td>
