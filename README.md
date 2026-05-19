@@ -54,6 +54,30 @@ Utiliza el motor de plantillas **Thymeleaf** para renderizar contenido dinámico
 
 ---
 
+## 🔐 Seguridad y Control de Acceso (RBAC)
+
+El sistema implementa un modelo de **Control de Acceso Basado en Roles (RBAC)** mediante **Spring Security**, asegurando que cada usuario acceda únicamente a las funciones permitidas según su cargo.
+
+### Definición de Roles
+1.  **ADMINISTRADOR:** Posee control total sobre el sistema, incluyendo gestión de personal, configuración de precios y auditoría de ventas.
+2.  **CAJERO:** Rol operativo enfocado en la atención al cliente y ejecución de ventas. Tiene restringido el acceso a configuraciones críticas.
+
+### Matriz de Permisos y Rutas Protegidas
+| Módulo | Funcionalidad | Acceso |
+| :--- | :--- | :--- |
+| **Usuarios** | CRUD completo de empleados | Solo Administrador |
+| **Productos** | Crear, editar y eliminar catálogo | Solo Administrador |
+| **Ventas** | Anular facturas (Seguridad fiscal) | Solo Administrador |
+| **Clientes** | Eliminar registros de clientes | Solo Administrador |
+| **General** | Dashboard, Listar catálogos, Realizar Ventas | Todos los Roles |
+
+### Implementación Técnica
+*   **Seguridad de Capa:** Configuración de `SecurityFilterChain` para restricción física de URLs.
+*   **Interfaz Adaptativa:** Uso de lógica condicional en Thymeleaf para ocultar botones de acción (Editar/Eliminar) a usuarios sin permisos.
+*   **Manejo de Intrusiones:** Implementación de una página personalizada de **Acceso Denegado (403)** para intentos de acceso no autorizado.
+
+---
+
 ## 🖼️ Guía de Funcionamiento y Vistas
 
 | Módulo | Captura de Imagen (Colocar Aquí)                                           | Funcionamiento Detallado |
