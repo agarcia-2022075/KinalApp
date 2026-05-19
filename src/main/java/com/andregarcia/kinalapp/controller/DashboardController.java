@@ -61,4 +61,9 @@ public class DashboardController {
 
         return "dashboard";
     }
+
+    @GetMapping("/403")
+    public String accesoDenegado() {
+        return "403";
+    }
 }
