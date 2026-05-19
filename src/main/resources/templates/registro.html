@@ -239,7 +239,15 @@
         <label><i class="fas fa-lock"></i> Contraseña</label>
         <div class="input-icon">
           <i class="fas fa-key"></i>
-          <input type="password" name="password" required placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+          <input type="password" name="password" required minlength="6" placeholder="Mínimo 6 caracteres" autocomplete="new-password">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label><i class="fas fa-lock"></i> Confirmar Contraseña</label>
+        <div class="input-icon">
+          <i class="fas fa-key"></i>
+          <input type="password" name="confirmarPassword" required minlength="6" placeholder="Repita su contraseña" />
         </div>
       </div>
 
