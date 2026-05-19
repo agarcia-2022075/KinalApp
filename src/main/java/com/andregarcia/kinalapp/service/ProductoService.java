@@ -75,6 +75,9 @@ public class ProductoService implements IProductoService {
         if (producto.getNombreProducto() == null || producto.getNombreProducto().trim().isEmpty()) {
             throw new IllegalArgumentException("El nombre del producto es obligatorio.");
         }
+        if (producto.getNombreProducto().length() > 100) {
+            throw new IllegalArgumentException("El nombre del producto no puede exceder los 100 caracteres.");
+        }
         if (producto.getPrecio() == null || producto.getPrecio().compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("El precio no puede ser negativo o nulo.");
         }

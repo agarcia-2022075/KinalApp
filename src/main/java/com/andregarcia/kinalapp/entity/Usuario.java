@@ -21,6 +21,9 @@ public class Usuario {
     @Column(name = "estado")
     private int estado;
 
+    @Transient
+    private String confirmarPassword;
+
     // constructor vacío
     public Usuario() {
     }
@@ -80,5 +83,13 @@ public class Usuario {
 
     public void setEstado(int estado) {
         this.estado = estado;
+    }
+
+    public String getConfirmarPassword() {
+        return confirmarPassword;
+    }
+
+    public void setConfirmarPassword(String confirmarPassword) {
+        this.confirmarPassword = confirmarPassword;
     }
 }
