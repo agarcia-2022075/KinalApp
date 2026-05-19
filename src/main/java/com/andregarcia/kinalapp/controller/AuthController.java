@@ -33,6 +33,7 @@ public class AuthController {
     @PostMapping("/registro")
     public String procesarRegistro(@RequestParam String username,
                                    @RequestParam String password,
+                                   @RequestParam String confirmarPassword,
                                    @RequestParam String email,
                                    @RequestParam String rol,
                                    Model model) {
@@ -47,6 +48,7 @@ public class AuthController {
             Usuario nuevoUsuario = new Usuario();
             nuevoUsuario.setUsername(username);
             nuevoUsuario.setPassword(password); 
+            nuevoUsuario.setConfirmarPassword(confirmarPassword);
             nuevoUsuario.setEmail(email);
             nuevoUsuario.setRol(rol);
             nuevoUsuario.setEstado(1); 

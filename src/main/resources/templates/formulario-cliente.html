@@ -325,6 +325,7 @@
                 <div class="form-group">
                     <label><i class="fas fa-id-card"></i> DPI del Cliente</label>
                     <input type="text" th:field="*{dpiCliente}" required
+                           pattern="\d{13}" title="El DPI debe contener exactamente 13 dígitos numéricos."
                            th:readonly="${cliente.dpiCliente != null and !cliente.dpiCliente.isEmpty()}"
                            placeholder="Ej: 1234567890101" />
                     <small style="color: #7f8c8d; font-size: 0.7rem;">Número único de identificación (solo lectura en edición)</small>
@@ -332,17 +333,17 @@
 
                 <div class="form-group">
                     <label><i class="fas fa-user"></i> Nombre</label>
-                    <input type="text" th:field="*{nombreCliente}" required placeholder="Nombre completo" />
+                    <input type="text" th:field="*{nombreCliente}" required maxlength="50" placeholder="Nombre completo" />
                 </div>
 
                 <div class="form-group">
                     <label><i class="fas fa-user"></i> Apellido</label>
-                    <input type="text" th:field="*{apellidoCliente}" required placeholder="Apellido" />
+                    <input type="text" th:field="*{apellidoCliente}" required maxlength="50" placeholder="Apellido" />
                 </div>
 
                 <div class="form-group">
                     <label><i class="fas fa-map-marker-alt"></i> Dirección</label>
-                    <input type="text" th:field="*{direccion}" required placeholder="Calle, zona, ciudad" />
+                    <input type="text" th:field="*{direccion}" required maxlength="100" placeholder="Calle, zona, ciudad" />
                 </div>
 
                 <div class="form-group">

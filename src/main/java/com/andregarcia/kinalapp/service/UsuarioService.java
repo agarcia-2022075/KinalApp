@@ -78,6 +78,13 @@ public class UsuarioService implements IUsuarioService {
         if (usuario.getPassword() == null || usuario.getPassword().trim().isEmpty()) {
             throw new IllegalArgumentException("La contraseña es obligatoria.");
         }
+        if (usuario.getPassword().length() < 6) {
+            throw new IllegalArgumentException("La contraseña debe tener al menos 6 caracteres.");
+        }
+        // Validar confirmación de contraseña (solo si es nuevo o se está cambiando)
+        if (usuario.getConfirmarPassword() != null && !usuario.getPassword().equals(usuario.getConfirmarPassword())) {
+            throw new IllegalArgumentException("Las contraseñas no coinciden.");
+        }
         if (usuario.getEmail() == null || usuario.getEmail().trim().isEmpty()) {
             throw new IllegalArgumentException("El email es obligatorio.");
         }

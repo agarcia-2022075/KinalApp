@@ -28,7 +28,16 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
+                // Rutas públicas (No requieren login)
                 .requestMatchers("/login", "/registro", "/images/**", "/css/**", "/js/**").permitAll()
+                
+                // Rutas exclusivas para ADMINISTRADOR
+                .requestMatchers("/usuarios/**").hasRole("ADMINISTRADOR")
+                .requestMatchers("/clientes/eliminar/**").hasRole("ADMINISTRADOR")
+                .requestMatchers("/productos/nuevo", "/productos/editar/**", "/productos/eliminar/**").hasRole("ADMINISTRADOR")
+                .requestMatchers("/ventas/anular/**").hasRole("ADMINISTRADOR")
+                
+                // El resto de rutas requieren al menos estar autenticado (Cajeros y Admins)
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -40,7 +49,10 @@ public class SecurityConfig {
                 .logoutSuccessUrl("/login?logout")
                 .permitAll()
             )
-            .csrf(csrf -> csrf.disable()); // Deshabilitado para facilitar el desarrollo inicial
+            .exceptionHandling(exception -> exception
+                .accessDeniedPage("/403") // Página personalizada de acceso denegado
+            )
+            .csrf(csrf -> csrf.disable()); 
             
         return http.build();
     }

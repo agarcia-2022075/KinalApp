@@ -351,7 +351,7 @@
                 <tr th:each="venta : ${ventas}">
                     <td th:text="${venta.codigoVenta}">1</td>
                     <td th:text="${#temporals.format(venta.fechaVenta, 'dd/MM/yyyy')}">15/04/2025</td>
-                    <td th:text="${venta.cliente.nombreCliente + ' ' + venta.cliente.apellidoCliente}">María González</td>
+                    <td th:text="${venta.cliente != null ? (venta.cliente.nombreCliente + ' ' + venta.cliente.apellidoCliente) : 'Cliente No Asignado'}">María González</td>
                     <td th:text="${venta.usuario.username}">admin01</td>
                     <td class="total" th:text="'Q ' + ${#numbers.formatDecimal(venta.total, 1, 2)}">Q 1500.00</td>
                     <td>
@@ -366,11 +366,14 @@
                         <a th:href="@{/ventas/detalle/{id}(id=${venta.codigoVenta})}" class="btn-detalle">
                             <i class="fas fa-eye"></i> Detalle
                         </a>
-                        <a th:if="${venta.estado == 1}" th:href="@{/ventas/anular/{id}(id=${venta.codigoVenta})}"
+                        <a th:if="${venta.estado == 1 and session.rolUsuario == 'ADMINISTRADOR'}" th:href="@{/ventas/anular/{id}(id=${venta.codigoVenta})}"
                            class="btn-anular"
                            onclick="return confirm('¿Está seguro que desea ANULAR esta factura? Esta acción es irreversible.');">
                             <i class="fas fa-ban"></i> Anular
                         </a>
+                        <span th:if="${venta.estado == 1 and session.rolUsuario != 'ADMINISTRADOR'}" class="estado-badge estado-activa">
+                            <i class="fas fa-lock"></i> Bloqueada
+                        </span>
                         <span th:if="${venta.estado == 0}" class="btn-anular disabled" style="background-color: #bdc3c7; cursor: not-allowed;">
                             <i class="fas fa-lock"></i> Anulada
                         </span>

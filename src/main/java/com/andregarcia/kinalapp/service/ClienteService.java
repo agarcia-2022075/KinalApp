@@ -110,15 +110,25 @@ public class ClienteService implements IClienteService {
         * Validaciones de negocio. Este metodo se hara privado porque es algo
         * interno del servicio
          */
-            if(cliente.getDpiCliente() == null || cliente.getDpiCliente().trim().isEmpty()){
-                throw new IllegalArgumentException("El Dpi es un dato obligatorio");
+            if(cliente.getDpiCliente() == null || !cliente.getDpiCliente().matches("^\\d{13}$")){
+                throw new IllegalArgumentException("El DPI debe contener exactamente 13 dígitos numéricos.");
             }
             if(cliente.getNombreCliente()== null|| cliente.getNombreCliente().trim().isEmpty()){
                 throw new IllegalArgumentException("El nombre es un dato obligatorio");
             }
+            if(cliente.getNombreCliente().length() > 50){
+                throw new IllegalArgumentException("El nombre no puede exceder los 50 caracteres.");
+            }
 
             if (cliente.getApellidoCliente()== null || cliente.getApellidoCliente().trim().isEmpty()){
                 throw  new IllegalArgumentException("el apellido es un dato obligatorio");
+            }
+            if(cliente.getApellidoCliente().length() > 50){
+                throw new IllegalArgumentException("El apellido no puede exceder los 50 caracteres.");
+            }
+
+            if(cliente.getDireccion() != null && cliente.getDireccion().length() > 100){
+                throw new IllegalArgumentException("La dirección no puede exceder los 100 caracteres.");
             }
 }
 }
