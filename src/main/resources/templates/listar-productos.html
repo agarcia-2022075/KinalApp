@@ -388,7 +388,7 @@
         </div>
 
         <div class="toolbar">
-            <a th:href="@{/productos/nuevo}" class="btn-nuevo"><i class="fas fa-plus-circle"></i> Nuevo Producto</a>
+            <a th:if="${session.rolUsuario == 'ADMINISTRADOR'}" th:href="@{/productos/nuevo}" class="btn-nuevo"><i class="fas fa-plus-circle"></i> Nuevo Producto</a>
             <div class="filtros">
                 <input type="text" id="buscador" class="buscador-input" placeholder="🔍 Buscar por nombre o código..." onkeyup="filtrarTabla()">
                 <a th:href="@{/productos}"><i class="fas fa-list"></i> Todos</a>
@@ -405,7 +405,7 @@
                     <th>Precio</th>
                     <th>Stock</th>
                     <th>Estado</th>
-                    <th>Acciones</th>
+                    <th th:if="${session.rolUsuario == 'ADMINISTRADOR'}">Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -427,7 +427,7 @@
                             <i class="fas fa-circle" style="font-size: 0.5rem; vertical-align: middle;"></i> Inactivo
                         </span>
                     </td>
-                    <td class="acciones">
+                    <td class="acciones" th:if="${session.rolUsuario == 'ADMINISTRADOR'}">
                         <a th:href="@{/productos/editar/{id}(id=${producto.codigoProducto})}" class="btn-editar">
                             <i class="fas fa-edit"></i> Editar
                         </a>

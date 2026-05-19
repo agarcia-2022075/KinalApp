@@ -416,7 +416,7 @@
                         <a th:href="@{/clientes/editar/{dpi}(dpi=${cliente.dpiCliente})}" class="btn-editar">
                             <i class="fas fa-edit"></i> Editar
                         </a>
-                        <a th:if="${cliente.estado == 1}" th:href="@{/clientes/eliminar/{dpi}(dpi=${cliente.dpiCliente})}" class="btn-eliminar"
+                        <a th:if="${cliente.estado == 1 and session.rolUsuario == 'ADMINISTRADOR'}" th:href="@{/clientes/eliminar/{dpi}(dpi=${cliente.dpiCliente})}" class="btn-eliminar"
                            style="background-color: #e74c3c;"
                            onclick="return confirm('¿Está seguro de DESACTIVAR este cliente? No aparecerá en las ventas nuevas.')">
                             <i class="fas fa-ban"></i> Desactivar
